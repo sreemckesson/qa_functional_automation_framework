@@ -21,6 +21,8 @@
             <class name="com.mck.rp.tetscases.DataManagement.FeeSchedule.FeeScheduleSmokeTest"/>
             <class name="com.mck.rp.tetscases.DataManagement.SupportiveCare.SupportiveCareRegimenManagementSmokeTest"/>
             <class name="com.mck.rp.tetscases.PracticeAndUserManagement.Users.UsersSmokeTest"/>
+            <class name="com.mck.rp.tetscases.ClinicalContent.BaseFormulary.ClinicalContent_BaseFormularySmokeTest"/>
+
         </classes>
 
     </test>

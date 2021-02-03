@@ -41,6 +41,12 @@ public class PatientAnalysisSmokeTest extends BaseTest {
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
 
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Description("Patient Analysis - Patient Analysis - Validation of Use Defaults and Calculate and Sort results by Regimen Name and " +

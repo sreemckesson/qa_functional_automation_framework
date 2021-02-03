@@ -41,6 +41,12 @@ public class FeeScheduleSmokeTest extends BaseTest {
         dp = new DataManagementPage(driver);
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
+
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(priority = 1, groups = {"smoke"}, description = "Data Management - Fee Schedule - Validation of Fee Schedules search in Fee Schedule Table. " +
