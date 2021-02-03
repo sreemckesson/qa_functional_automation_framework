@@ -37,6 +37,12 @@ public class UsersSmokeTest extends BaseTest {
         dp = new DataManagementPage(driver);
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
+
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(priority = 1, groups = "smoke", description = "Practice And User Management - Users - Validation of search by users in Users Table " +

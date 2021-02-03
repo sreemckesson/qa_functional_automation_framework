@@ -30,7 +30,7 @@ public class BaseFormularySmokeTest extends BaseTest {
     RegimenAnalysisPage rp;
     DataManagementPage dp;
     LoginPage lp;
-    String srhDrug = "sulfate";
+    String srhDrug = "liposomal"; //"sulfate"
     String srhHCPC = "j1454";
     String srhNonDrug = "drug";
     String calculationDrug = "bleomycin";
@@ -44,6 +44,11 @@ public class BaseFormularySmokeTest extends BaseTest {
         dp = new DataManagementPage(driver);
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(priority = 1, groups = "smoke", description = "Data Management - Base Formulary Page - Drug Formulary - Validation of search functionality by Drug and HCPC in Drug Formulary" +

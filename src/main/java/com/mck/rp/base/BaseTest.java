@@ -28,7 +28,7 @@ public class BaseTest {
         prop.setProperty("browser",prop.getProperty("browser"));
         driver = basePage.init_driver(prop);
         loginPage = new LoginPage(driver);
-        loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+       // loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
     }
 
     public void extentReportLog(String mtype, String msg){

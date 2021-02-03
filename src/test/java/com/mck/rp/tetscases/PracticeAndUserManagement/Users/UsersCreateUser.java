@@ -40,6 +40,12 @@ public class UsersCreateUser extends BaseTest {
         dp = new DataManagementPage(driver);
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
+
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(priority = 1, groups = "regression", description = "Practice And User Management - Users - Create User of type" +

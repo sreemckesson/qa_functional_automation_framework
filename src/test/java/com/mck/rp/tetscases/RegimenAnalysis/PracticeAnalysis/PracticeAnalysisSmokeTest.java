@@ -40,6 +40,12 @@ public class PracticeAnalysisSmokeTest extends BaseTest {
         rp = new RegimenAnalysisPage(driver);
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
+
+        try {
+            loginPage.doLogin(prop.getProperty("defaultUsername"), prop.getProperty("defaultPassword"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test(priority = 1, groups = "smoke", description = "Practice Analysis Page - Regimen Library - Validation of Search by Regimen Name, Diagnosis or Drug and Sort Results by " +

@@ -199,4 +199,16 @@ public class DataManagementPage extends BasePage {
         }
         return text;
     }
+
+    //move this to regimen analysis page:
+    public By getTextArea(String eleName) {
+        By element = By.xpath("//div[@data-testid='"+ eleName + "']//textarea");
+        return element;
+    }
+
+    //move this to regimen analysis page:
+    public By getBtnTypeButton(String type, String name) {
+        By btn = By.xpath("//button[@type='" + type + "' and @data-testid='"+ name + "']");
+        return btn;
+    }
 }
