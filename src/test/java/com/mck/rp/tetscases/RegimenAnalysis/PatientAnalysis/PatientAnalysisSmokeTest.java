@@ -52,14 +52,14 @@ public class PatientAnalysisSmokeTest extends BaseTest {
     @Description("Patient Analysis - Patient Analysis - Validation of Use Defaults and Calculate and Sort results by Regimen Name and " +
             "Patient Responsibility using Columns Sort functionality")
     @Severity(SeverityLevel.NORMAL)
-     @Test(priority = 1, groups = "smoke",description = "Patient Analysis - Patient Analysis - Validation of Use Defaults and Calculate and Sort Results by" +
+    @Test(priority = 1, groups = "smoke",description = "Patient Analysis - Patient Analysis - Validation of Use Defaults and Calculate and Sort Results by" +
             "Regimen Name and Patient Responsibility using Columns Sort functionality")
     public void patientAnalysisSearch() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
             Assert.assertTrue(rp.isLogoutExist());
             rp.clickTabs("Patient Analysis");
-            sa.assertEquals(rp.getGridHeading(), "Patient Information");
+            sa.assertEquals(rp.getGridHeading(), "Patient Information", "Incorrect page heading");
 
             eu.doClick(rp.useDefaults);
             rp.clickSubmit("Calculate");
@@ -72,7 +72,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                     //System.out.println("Cell Date: " + rp.getRowCellData(rp.patTable, i)[0]);
                     sa.assertTrue(rp.getRowCellData(rp.patTable, i)[0].toLowerCase().contains(srhDrug));
                 }
-                ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the given search criteria: " + rp.getNumOfGridResults());
+                //ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the given search criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the given search criteria: " + rp.getNumOfGridResults());
 
                 //Sort by Name
@@ -82,7 +82,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 eu.syncWait(3);
                 List<String> afterSortList = rp.tableColumnList(rp.patTable, 0);
                 //System.out.println("Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
-                sa.assertEquals(sortList, afterSortList);
+                sa.assertEquals(sortList, afterSortList, "Sort by Name - Not working as expected");
                 rp.clickTableHeaderForSort("Regimen Name");
                 eu.syncWait(3);
 
@@ -93,15 +93,13 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 eu.syncWait(3);
                 List<Integer> afterSortNumsList = rp.tableNumColumnList(rp.patTable, 1);
                 //System.out.println("Before: " + beforeSortNumsList + "\r\n" + "Sort: " + sortNumsList + "\r\n" + "After: " + afterSortNumsList);
-                sa.assertEquals(sortNumsList, afterSortNumsList);
-               //eu.doClick(rp.gridSrhClear);
+                sa.assertEquals(sortNumsList, afterSortNumsList, "Sort by Insurer Responsibility - Not working as expected");
+                //eu.doClick(rp.gridSrhClear);
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (NoSuchElementException | InterruptedException e) {
-            ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed!!");
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
@@ -126,29 +124,28 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 sa.assertTrue(eu.isElementPresent(rp.patTable));
                 int beforeFilter = rp.getNumOfGridResults();
 
+                //Diagnosis Filter
                 rp.clickGridFilters("diagnosis-select", "Diagnosis");
                 rp.selectFilterItemByName("Amyloidosis");
                 if (!rp.getTextContent(rp.patTable).contains("search did not match any results")) {
-                    ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Diagnosis filter criteria: " + rp.getNumOfGridResults());
+                    //ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Diagnosis filter criteria: " + rp.getNumOfGridResults());
                     AllureReportListener.saveLogs("Number of records that match the selected Diagnosis filter criteria: " + rp.getNumOfGridResults());
                     int afterDiagFilter = rp.getNumOfGridResults();
-                    sa.assertNotEquals(beforeFilter, afterDiagFilter);
+                    sa.assertNotEquals(beforeFilter, afterDiagFilter, "Diagnosis Filter - Not working as expected");
                 } else {
-                    ExtentReportListener.test.get().log(Status.INFO, "Diagnosis filter search did not return any results");
                     AllureReportListener.saveLogs("Diagnosis filter search did not return any results");
                 }
                 eu.clickWhenReady(rp.getFilterSelectClear("diagnosis-select"), 5);
 
+                //Drugs Filter
                 eu.syncWait(5);
                 rp.clickGridFilters("drugs-select", "Drug");
                 rp.selectFilterItemByIndex(1);
                 if (!rp.getTextContent(rp.patTable).contains("search did not match any results")) {
-                   // ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
                     AllureReportListener.saveLogs("Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
                     int afterDrugFilter = rp.getNumOfGridResults();
-                    sa.assertNotEquals(beforeFilter, afterDrugFilter);
+                    sa.assertNotEquals(beforeFilter, afterDrugFilter, "drugs Filter - Not working as expected");
                 } else {
-                    ExtentReportListener.test.get().log(Status.INFO, "Drug filter search did not return any results");
                     AllureReportListener.saveLogs("Drug filter search did not return any results");
                 }
                 eu.clickWhenReady(rp.getFilterSelectClear("drugs-select"), 5);
@@ -159,19 +156,16 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.selectPaginationRows("50");
                 eu.syncWait(3);
                 String afterPagination = eu.getElement(rp.gridResults).getText();
-                sa.assertNotEquals(beforePagination, afterPagination);
+                sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Not working as expected");
 
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.FAIL, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (InterruptedException e) {
-            ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed!!");
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
-
     }
 
     @Description("Patient Analysis - Patient Report - Regimen Summary - Validation of View And Edit Details functionality")
@@ -190,9 +184,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
             //eu.doClick(rp.gridSrhClear);
             if (rp.getNumOfGridResults() > 0) {
                 rp.srhRegDrugDiagAndEnter(srhDrug);
-               // ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the given search criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the given search criteria: " + rp.getNumOfGridResults());
-
 
                 //Rows are in odd numbers 1, 3, 5 etc, even numbers are the separators in the grid
                 String gridRowText = eu.getText(rp.getGridcell("patient-analysis-table", 1, 1));
@@ -201,25 +193,22 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 eu.scrollToView(rp.btnViewEditDts);
                 eu.doClick(rp.btnViewEditDts);
                 String drugViewDts = eu.getTextcontent(rp.drugDetailsTitle);
-                sa.assertEquals(gridRowText, drugViewDts.substring(0, drugViewDts.length() - 1));
+                sa.assertEquals(gridRowText, drugViewDts.substring(0, drugViewDts.length() - 1), "Patient Analysis - Table value and Details page value are not matching");
                 sa.assertTrue(eu.isElementPresent(rp.getBtnTypeButton("Add Lump Sum")));
 
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
-
             }
         } catch (NoSuchElementException e) {
-            ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed!!");
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
     }
 
-  @Test(priority = 4, groups = "smoke",description = "Patient Analysis - Regimen Summary - Validation of the Patient Responsibility value when Antiemetics and Growth Factor dropdown" +
-           " items are changed and Cycles value is changed." + "\r\n" + " Validation of Export functionality in Patient Report page" + "\r\n" + "Validation of Add Lump Sum functionality" + "\r\n" +
-           " Validation of Drug and Non drug modal windows are opening when clicked on Add buttons ")
+    @Test(priority = 4, groups = "smoke",description = "Patient Analysis - Regimen Summary - Validation of the Patient Responsibility value when Antiemetics and Growth Factor dropdown" +
+            " items are changed and Cycles value is changed." + "\r\n" + " Validation of Export functionality in Patient Report page" + "\r\n" + "Validation of Add Lump Sum functionality" + "\r\n" +
+            " Validation of Drug and Non drug modal windows are opening when clicked on Add buttons ")
     @Severity(SeverityLevel.NORMAL)
     @Description("Patient Analysis - Regimen Summary - Validation of the Patient Responsibility value when Antiemetics and Growth Factor dropdown" +
             " items are changed and Cycles value is changed." + "\r\n" + " Validation of Export functionality in Patient Report page " + "\r\n" + "Validation of Add Lump Sum functionality" + "\r\n" +
@@ -228,8 +217,8 @@ public class PatientAnalysisSmokeTest extends BaseTest {
         SoftAssert sa = new SoftAssert();
 
         try {
-           rp.clickByLinkText("Patient Analysis");
-           sa.assertEquals(rp.getGridHeading(), "Patient Information");
+            rp.clickByLinkText("Patient Analysis");
+            sa.assertEquals(rp.getGridHeading(), "Patient Information", "Incorrect grid heading");
 
             eu.doClick(rp.useDefaults);
             rp.clickSubmit("Calculate");
@@ -240,8 +229,6 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.clickButton("Export");
                 rp.clickSubListItem("Export as PDF");
 
-                ExtentReportListener.test.get().log(Status.INFO, "Row Count: " + eu.getGridRowCount(rp.patTable) + " and " +
-                     "Column Count " + eu.getGridColumnCount(rp.patTable));
                 AllureReportListener.saveLogs("Row Count: " + eu.getGridRowCount(rp.patTable) + " and " +
                         "Column Count " + eu.getGridColumnCount(rp.patTable));
 
@@ -260,18 +247,17 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 eu.doClick(rp.btnViewEditDts);
                 eu.syncWait(2);
                 String drugViewDts = eu.getTextcontent(rp.drugDetailsTitle);
-                sa.assertEquals(gridRowText, drugViewDts.substring(0, drugViewDts.length() - 1));
+                sa.assertEquals(gridRowText, drugViewDts.substring(0, drugViewDts.length() - 1),
+                        "Patient Analysis - Table value and (Click and Edit Details) details page value are not matching ");
 
                 String antiemeticSelect = rp.summaryAntieGfactorSelectItem("antiemetic", 1);
                 String antiemeticPatRes = rp.getTextContent(rp.patSummaryPatResp);
                 if(eu.getTextcontent(rp.suppCareSummary).contains("Antiemetics are not required for this regimen")) {
-                    //System.out.println("Antimetics not required for this");
-                    ExtentReportListener.test.get().log(Status.INFO, "Antimetics not required for this");
                     AllureReportListener.saveLogs("Antimetics not required for this");
                 }
                 else{
                     //System.out.println("Anti: " + antiemeticPatRes);
-                    sa.assertNotEquals(antiemeticPatRes, regLibPatRes);
+                    sa.assertNotEquals(antiemeticPatRes, regLibPatRes, "Antiemetics - Patient Responsibility not changing after filter change");
                     //System.out.println("AntiName1: " + rp.getTextContent(rp.summaryDrugTable).toLowerCase());
                     //System.out.println("AntiName1: "+ rp.subString(antiemeticSelect, " ", 0).toLowerCase());
                     sa.assertTrue(rp.getTextContent(rp.summaryDrugTable).toLowerCase().contains(rp.subString(antiemeticSelect, " ", 0).toLowerCase()));
@@ -283,7 +269,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 String growthFactorSelect = rp.summaryAntieGfactorSelectItem("growthFactor", 1);
                 String growthFacPatRes = rp.getTextContent(rp.patSummaryPatResp);
                 //System.out.println("GF: " + growthFacPatRes);
-                sa.assertNotEquals(growthFacPatRes, regLibPatRes);
+                sa.assertNotEquals(growthFacPatRes, regLibPatRes, "Growth Factor - Patient Responsibility not changing after GF filter value change ");
                 sa.assertTrue(rp.getTextContent(rp.summaryDrugTable).toLowerCase().contains(rp.subString(growthFactorSelect, " ", 0).toLowerCase()));
 
                 rp.sendKeysByAction("numberOfCycles", "10");
@@ -291,7 +277,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 TimeUnit.SECONDS.sleep(2);
                 String cyclesPatRes = rp.getTextContent(rp.patSummaryPatResp);
                 //System.out.println("Cyc: " + cyclesPatRes);
-                sa.assertNotEquals(cyclesPatRes, regLibPatRes);
+                sa.assertNotEquals(cyclesPatRes, regLibPatRes, "Number of Cycles - Patient Responsibility not changing after NOCycles change");
 
                 rp.clickButton("Add Lump Sum");
                 String amount = String.format("%.2f", (new Random().nextInt(99) / new Random().nextDouble()));
@@ -330,19 +316,17 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 }
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (InterruptedException | StaleElementReferenceException e) {
-            ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed.");
             AllureReportListener.saveLogs("Test method Failed");
         }
         sa.assertAll();
     }
     @Test(priority = 5, groups = "smoke",description = "Patient Analysis - Patient Information - Validation of Primary Insurance - CoInsurance, BSA, Insurace Fee Schedule, " +
             "Out Of Pocket, Deductible, CoPays - Amount and cycles are working with different values selection." + "\r\n" +
-           "Validation of Secondary Insurance - Secondary Fee Schedule, Coinsurnace, Out Of Pocket, Deductible and Secondary pays Primary Deductible are " +
-           "working with different values.")
+            "Validation of Secondary Insurance - Secondary Fee Schedule, Coinsurnace, Out Of Pocket, Deductible and Secondary pays Primary Deductible are " +
+            "working with different values.")
     @Severity(SeverityLevel.NORMAL)
     @Description("Patient Analysis - Patient Information - Validation of Primary Insurance - CoInsurance, BSA, Insurace Fee Schedule," +
             "Out Of Pocket, Deductible, CoPays - Amount and cycles are working with different values selection." + "\r\n" +
@@ -352,29 +336,23 @@ public class PatientAnalysisSmokeTest extends BaseTest {
         SoftAssert sa = new SoftAssert();
         try {
             rp.clickByLinkText("Patient Analysis");
-            sa.assertEquals(rp.getGridHeading(), "Patient Information");
+            sa.assertEquals(rp.getGridHeading(), "Patient Information", "incorrect Page heading");
 
             eu.doClick(rp.useDefaults);
             rp.clickSubmit("Calculate");
             rp.srhRegDrugDiagAndEnter(srhDrug);
-            //Thread.sleep(5000);
+
             if (rp.getNumOfGridResults() > 0) {
-                ExtentReportListener.test.get().log(Status.INFO, "Regimen Search: " + srhDrug + " returned: " + eu.getGridRowCount(rp.patTable) + " rows ");
                 AllureReportListener.saveLogs("Number of rows returned for the search - " + srhDrug + " : " + eu.getGridRowCount(rp.patTable));
 
                 String beforeSrhRowValues = rp.getGridRowData(rp.patTable, 1);
-                /*
-                String regName, regLibPatRes;
-                regName = rp.getRowCellData(rp.patTable, 0)[0];
-                regLibPatRes = rp.getRowCellData(rp.patTable, 0)[1];
-                */
 
                 //Changing the Fee Schedule and validating
                 rp.clickImg(rp.patientInformationCollapse);
                 rp.analysisCriAntieGfactorSelectItem("primaryInsurance.feeSchedule", 1);
                 rp.clickSubmit("Calculate");
                 String afterFeeScheValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(beforeSrhRowValues, afterFeeScheValues);
+                sa.assertNotEquals(beforeSrhRowValues, afterFeeScheValues, "Primary Insurance Fee Schedule - Not working as expected");
 
                 //Changing CoInsurance
                 rp.clickImg(rp.patientInformationCollapse);
@@ -382,14 +360,14 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("primaryInsurance.coinsurance", String.valueOf(new Random().nextInt(40)));
                 rp.clickSubmit("Calculate");
                 String afterCoInsValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterFeeScheValues, afterCoInsValues);
+                sa.assertNotEquals(afterFeeScheValues, afterCoInsValues, "Primary Insurance CoInsurance - NOt working as expected");
 
                 //Validating with providing Deductible amount
                 rp.clickImg(rp.patientInformationCollapse);
                 rp.sendKeysByAction("primaryInsurance.remainingDeductible.remaining", String.valueOf(new Random().nextInt(500)));
                 rp.clickSubmit("Calculate");
                 String afterDeductibleValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterCoInsValues, afterDeductibleValues);
+                sa.assertNotEquals(afterCoInsValues, afterDeductibleValues, "Primary Insurance Deductible - Not working as expected ");
 
                 //Validating with providing OutOfPocket amount
                 rp.clickImg(rp.patientInformationCollapse);
@@ -397,7 +375,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("primaryInsurance.remainingOutOfPocket.remaining", String.valueOf(new Random().nextInt(400)));
                 rp.clickSubmit("Calculate");
                 String afterOutOfPocValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterDeductibleValues, afterOutOfPocValues);
+                sa.assertNotEquals(afterDeductibleValues, afterOutOfPocValues, "Primary Insurance Out of Pocket - Not working as expected");
 
                 //Validating with providing CoPay and Cycles values
                 rp.clickImg(rp.patientInformationCollapse);
@@ -406,7 +384,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("primaryInsurance.copaysPerCycle", String.valueOf(new Random().nextInt(10)));
                 rp.clickSubmit("Calculate");
                 String afterCoPayCycValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterOutOfPocValues, afterCoPayCycValues);
+                sa.assertNotEquals(afterOutOfPocValues, afterCoPayCycValues, "Primary Insurance Copay and Cycles - Not working as expected");
 
                 rp.clickImg(rp.patientInformationCollapse);
                 rp.clickButton("Secondary insurance");
@@ -415,7 +393,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("secondaryInsurance.coinsurance", String.valueOf(new Random().nextInt(30)));
                 rp.clickSubmit("Calculate");
                 String afterSecondaryFeeScheCoInsValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterCoPayCycValues, afterSecondaryFeeScheCoInsValues);
+                sa.assertNotEquals(afterCoPayCycValues, afterSecondaryFeeScheCoInsValues, "Secondary Insurance CoInsurance - NOt working as expected");
 
                 //Validating with providing Deductible amount
                 rp.clickImg(rp.patientInformationCollapse);
@@ -423,7 +401,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("secondaryInsurance.remainingDeductible.remaining", String.valueOf(new Random().nextInt(350)));
                 rp.clickSubmit("Calculate");
                 String afterSecondaryDeductibleValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterSecondaryFeeScheCoInsValues, afterSecondaryDeductibleValues);
+                sa.assertNotEquals(afterSecondaryFeeScheCoInsValues, afterSecondaryDeductibleValues, "Secodary Insurance Deductible - Not working as expected");
 
                 //Validating with providing OutOfPocket amount
                 rp.clickImg(rp.patientInformationCollapse);
@@ -432,7 +410,7 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 rp.sendKeysByAction("secondaryInsurance.remainingOutOfPocket.remaining", String.valueOf(new Random().nextInt(200)));
                 rp.clickSubmit("Calculate");
                 String afterSecondaryOutOfPocValues = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterSecondaryDeductibleValues, afterSecondaryOutOfPocValues);
+                sa.assertNotEquals(afterSecondaryDeductibleValues, afterSecondaryOutOfPocValues, "Secondary Insurance Out of Pocket - Not working as expected");
 
                 rp.clickImg(rp.patientInformationCollapse);
                 eu.scrollToView(rp.getBtnTypeSubmit("Calculate"));
@@ -443,16 +421,14 @@ public class PatientAnalysisSmokeTest extends BaseTest {
                 eu.doClick(rp.secondaryPaysPrimaryDeductible);
                 rp.clickSubmit("Calculate");
                 String afterSecondaryPayPrimaryDed = rp.getGridRowData(rp.patTable, 1);
-                sa.assertNotEquals(afterSecondaryOutOfPocValues, afterSecondaryPayPrimaryDed);
+                sa.assertNotEquals(afterSecondaryOutOfPocValues, afterSecondaryPayPrimaryDed, "Secondary Pay Primary Deductible - Not working as expected");
 
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (NoSuchElementException e) {
             e.printStackTrace();
-            ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed");
             AllureReportListener.saveLogs("Test Method Failed");
         }
         sa.assertAll();
