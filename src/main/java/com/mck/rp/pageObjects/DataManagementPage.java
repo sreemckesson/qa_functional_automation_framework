@@ -16,6 +16,7 @@ public class DataManagementPage extends BasePage {
     public By nonDrugFormularyTable = By.xpath("//table[@data-testid='non-drug-formulary-table']");
     public By drugDetailsTable = By.xpath("//table[@data-testid='drug-details-table']");
     public By feeScheduleTable = By.xpath("//table[@data-testid='fee-schedules-table']");
+    public By feeScheduleEditTable = By.xpath("//table[@data-testid='table']");
     public By supportiveCareTable = By.xpath("//table[@data-testid='supportive-care-table']");
     public By calculationMethodDropdown = By.xpath("//div[@data-testid='select-calculation-method']");
     public By ddTheraputicClass = By.xpath("//div[@data-testid='select-therapeutic-classes']");
