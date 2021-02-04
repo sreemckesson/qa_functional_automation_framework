@@ -58,8 +58,8 @@ public class UsersSmokeTest extends BaseTest {
             Assert.assertTrue(rp.isLogoutExist());
             rp.clickLeftMenuItem("Practice & User Management");
             rp.clickByLinkText("Users");
-            sa.assertEquals(rp.getPageHeading(), "Users");
-            sa.assertEquals(rp.getGridHeading(), "Users");
+            sa.assertEquals(rp.getPageHeading(), "Users", "Incorrect Page Heading");
+            sa.assertEquals(rp.getGridHeading(), "Users", "incorrect table heading");
 
 
             int beforeFilter = rp.getNumOfGridResults();
@@ -67,9 +67,8 @@ public class UsersSmokeTest extends BaseTest {
             rp.srhRegDrugDiagAndEnter("rp");
             if (rp.getNumOfGridResults() > 0) {
                 int afterFilter = rp.getNumOfGridResults();
-                sa.assertNotEquals(beforeFilter, afterFilter);
+                sa.assertNotEquals(beforeFilter, afterFilter, "Pagination - Results are not updated by grid search");
 
-                ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the given search criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the given search criteria: " + rp.getNumOfGridResults());
                 rp.clickButton("Export");
                 rp.clickSubListItem("Export as Excel (.xlsx)"); //User Page
@@ -86,20 +85,19 @@ public class UsersSmokeTest extends BaseTest {
 
                 rp.clickGridFilters("user-status-select", "Status");
                 rp.selectFilterItemByName("Expired");
-                ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Last Updated By filter criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the selected Last Updated By filter criteria: " + rp.getNumOfGridResults());
                 int afterStatusFilter = rp.getNumOfGridResults();
-                sa.assertNotEquals(beforeFilter, afterStatusFilter);
+                sa.assertNotEquals(beforeFilter, afterStatusFilter, "Status Filter - Results are not updating");
                 eu.clickWhenReady(rp.getFilterSelectClear("user-status-select"), 3);
 
                 if ((rp.getNumOfGridResults() > 0)) {
-                    //Pagination - need to update for number of rows
+                    //Pagination - need to update for number of rows if <10 results
                     rp.selectPaginationRows("10");
                     eu.syncWait(1);
                     String afterPagination = eu.getElement(rp.gridResults).getText();
-                    ExtentReportListener.test.get().log(Status.INFO, "Grid Results before Pagination: " + beforePagination);
-                    ExtentReportListener.test.get().log(Status.INFO, "Grid Results after Pagination: " + afterPagination);
-                    sa.assertNotEquals(beforePagination, afterPagination);
+                    AllureReportListener.saveLogs("Grid Results before Pagination: " + beforePagination);
+                    AllureReportListener.saveLogs("Grid Results after Pagination: " + afterPagination);
+                    sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Results are not updated for pagination");
 
                     rp.srhRegDrugDiagAndEnter(srhUser);
                     String nameFromTable = rp.getRowCellData(dp.userTable, 0)[0];
@@ -111,7 +109,7 @@ public class UsersSmokeTest extends BaseTest {
                     String firstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
                     String lastName = eu.getAttribute(rp.getInputField("lastName"), "defaultValue");
                     String nameFromDetails = lastName + ", " + firstName;
-                    sa.assertEquals(nameFromTable, nameFromDetails);
+                    sa.assertEquals(nameFromTable, nameFromDetails, "Name - Table name and Details page name are not matching");
                     eu.scrollToBottom();
                     rp.clickButton("Cancel");
                     eu.syncWait(1);
@@ -124,11 +122,9 @@ public class UsersSmokeTest extends BaseTest {
                 rp.clickButton("Cancel");
             } else {
                 sa.fail();
-                ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (NoSuchElementException | InterruptedException | StaleElementReferenceException e) {
-            ExtentReportListener.test.get().log(Status.INFO, "Test Method Failed!!");
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
