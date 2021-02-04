@@ -73,8 +73,6 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
                     sa.assertTrue(rp.getRowCellData(dp.supportiveCareTable, i)[0].toLowerCase().contains(srhDrug), "Incorrect search drug");
                 }
 
-               // ExtentReportListener.test.get().log(Status.INFO,
-               //     "Number of records that match the given search criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the given search criteria: " + rp.getNumOfGridResults());
 
                 //Export
@@ -106,8 +104,6 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
                 int beforeFilter = rp.getNumOfGridResults();
                 rp.clickGridFilters("regimen-class-select", "Regimen Class");
                 rp.selectListItemByName("Antiemetic");
-              //  ExtentReportListener.test.get().log(Status.INFO,
-               //     "Number of records that match the selected Regimen Class filter criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the selected Regimen Class filter criteria: " + rp.getNumOfGridResults());
                 int afterRegimenFilter = rp.getNumOfGridResults();
                 sa.assertNotEquals(beforeFilter, afterRegimenFilter, "Incorrect regimen class filter count");
@@ -115,8 +111,6 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
 
                 rp.clickGridFilters("last-updated-by-select", "Last Updated By");
                 rp.selectFilterItemByIndex(0);
-               // ExtentReportListener.test.get().log(Status.INFO,
-               //     "Number of records that match the selected Last Updated By filter criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the selected Last Updated By filter criteria: " + rp.getNumOfGridResults());
                 int afterLastUpdatedByFilter = rp.getNumOfGridResults();
                 sa.assertNotEquals(beforeFilter, afterLastUpdatedByFilter, "Incorrect last updated by filter count ");
@@ -124,8 +118,6 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
 
                 rp.clickGridFilters("status-select", "Status");
                 rp.selectListItemByName("Active");
-              //  ExtentReportListener.test.get().log(Status.INFO,
-              //      "Number of records that match the selected Status filter criteria: " + rp.getNumOfGridResults());
                 AllureReportListener.saveLogs("Number of records that match the selected Status filter criteria: " + rp.getNumOfGridResults());
                 int afterStatusFilter = rp.getNumOfGridResults();
                 sa.assertNotEquals(beforeFilter, afterStatusFilter, "Incorrect status filter count");
@@ -136,8 +128,8 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
                 rp.selectPaginationRows("10");
                 eu.syncWait(2);
                 String afterPagination = eu.getElement(rp.gridResults).getText();
-              //  ExtentReportListener.test.get().log(Status.INFO, "Grid Results before Pagination: " + beforePagination);
-              //  ExtentReportListener.test.get().log(Status.INFO, "Grid Results after Pagination: " + afterPagination);
+                //  ExtentReportListener.test.get().log(Status.INFO, "Grid Results before Pagination: " + beforePagination);
+                //  ExtentReportListener.test.get().log(Status.INFO, "Grid Results after Pagination: " + afterPagination);
                 sa.assertNotEquals(beforePagination, afterPagination, "Incorrect pagination count");
 
 
@@ -156,15 +148,11 @@ public class SupportiveCareRegimenManagementSmokeTest extends BaseTest {
 
             } else {
                 sa.fail();
-               // ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (InterruptedException e) {
-           // ExtentReportListener.test.get().log(Status.FAIL, "Test Method Failed!!");
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
-
     }
-
 }
