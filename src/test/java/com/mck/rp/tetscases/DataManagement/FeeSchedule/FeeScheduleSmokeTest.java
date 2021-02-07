@@ -139,7 +139,7 @@ public class FeeScheduleSmokeTest extends BaseTest {
 
     }
     @Test(priority = 2, groups = {"smoke"}, description = "Data Management - Fee Schedule - Validation of Fee Schedules creation. " +
-            "Validation of below items in Edit fee Schedule page and FeeScheudleEdit table - . " +
+            "Validation of below items in Edit fee Schedule page and FeeScheudleEdit table for Drugs- . " +
             "Validation of Reimbursement Values section. Validation of percentage change values" +
             "Validation of calculate drug values by average sales price filter (pricing types awp ,asp,  medicare which is asp+6%)" +
             "Validation of date selection change.")
@@ -214,7 +214,7 @@ public class FeeScheduleSmokeTest extends BaseTest {
                     rp.selectListItemByIndex(1);
                     rp.clickButton("Calculate");
                     eu.syncWait(3);
-                    String afterCalculationDate = rp.getRowCellData(dp.feeScheduleEditTable, 0)[3];;
+                    String afterCalculationDate = rp.getRowCellData(dp.feeScheduleEditTable, 0)[3];
                     if (rp.getNumOfGridResults() > 0) {
                         sa.assertNotEquals(beforeCalculationDate, afterCalculationDate, "Date change did not change the table values");
                     }
@@ -233,6 +233,102 @@ public class FeeScheduleSmokeTest extends BaseTest {
                     if (rp.getNumOfGridResults() > 0) {
                         sa.assertTrue(rp.getRowCellData(dp.feeScheduleTable, 0)[0].equals(feeScheduleName));
                         sa.assertNotEquals(feeScheCountAfter, feeScheCountBefore, "Create New Fee Schedule is not working");
+                    }
+
+                }
+            } else {
+                sa.fail();
+                AllureReportListener.saveLogs("No Records exists in the table");
+            }
+        } catch (NoSuchElementException | InterruptedException e) {
+            AllureReportListener.saveLogs("Test Method Failed!!");
+        }
+        sa.assertAll();
+    }
+
+    @Test(priority = 3, groups = {"smoke"}, description = "Data Management - Fee Schedule - " +
+            "Validation of below items in Edit fee Schedule page and FeeScheudleEdit table for Non-Drugs- . " +
+            "Validation of Reimbursement Values section. Validation of percentage change values" +
+            "Validation of date selection change.")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Data Management - Fee Schedule - Data Management - Fee Schedule - " +
+            "Validation of below items in Edit fee Schedule page and FeeScheudleEdit table - " +
+            "Validation of Reimbursement Values section. Validation of percentage change values" +
+            "Validation of date selection change.")
+    public void feeSchedulesCreateNewNonDrugs() throws NoSuchElementException {
+        SoftAssert sa = new SoftAssert();
+        try {
+            Assert.assertTrue(rp.isLogoutExist());
+            //rp.clickLeftMenuItem("Data Management");
+            rp.clickByLinkText("Fee Schedules");
+            sa.assertEquals(rp.getPageHeading(), "Fee Schedules","Incorrect page heading");
+            sa.assertEquals(rp.getGridHeading(), "Fee Schedules", "Incorrect table heading");
+
+            //Creating new fee schedule with the name feeScheduleName
+            rp.clickButton("Create New");
+            sa.assertTrue(rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Create New Fee Schedule"),"Incorrect modal window heading");
+            if (rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Create New Fee Schedule")) {
+                String feeScheduleName = "Automation FeeSchedule " +
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyHHmmss"));
+                rp.sendValue("name", feeScheduleName);
+                rp.clickSubmit("Save");
+                eu.syncWait(5);
+                rp.clickTabs("Non-Drugs");
+
+                if (rp.getNumOfGridResults() > 0) {
+
+                    //checking the Calculate drug values by pricing filter - Medicare
+                    rp.clickButton("Calculate");
+                    eu.syncWait(3);
+                    //List<String> beforeCalculate = rp.tableColumnList(dp.feeScheduleEditTable, 3);
+                    int rowCount = eu.getGridRowCount(dp.feeScheduleEditTable);
+                    for (int i = 0; i < 5; i++) {
+                        sa.assertTrue(rp.getRowCellData(dp.feeScheduleEditTable, i)[2].contains("100% of Medicare"),
+                                "Non-Drugs - Medicare - Calculate - The row values does not contain 100% of Medicare after calculating values ");
+                    }
+
+                    //Change percentage and validate
+                    String beforeRowValues = rp.getGridRowData(dp.feeScheduleEditTable, 1);
+                    String percent = "80";
+                    rp.sendKeysByAction("percent", percent);
+                    rp.clickButton("Calculate");
+                    eu.syncWait(3);
+                    String afterRowValues = rp.getGridRowData(dp.feeScheduleEditTable, 1);
+                    //System.out.println("Before" + beforeRowValues + "\n" + "After:" + afterRowValues );
+                    if (rp.getNumOfGridResults() > 0) {
+                        sa.assertTrue(rp.getRowCellData(dp.feeScheduleEditTable, 0)[2].contains(percent),
+                                "Non-Drug - Calculate - Percentage - Fee Schedule Edit table does not contain the updated percentage.");
+                        sa.assertNotEquals(afterRowValues, beforeRowValues, "Non-Drugs: Percentage change did not change the table values");
+                    }
+
+                    //Select a different date from date dropdown and validate
+                    String calculationYear = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy"));
+                    String calculationDate = rp.getGridFilters("calculation-effective-date-select", calculationYear).getText();
+                    String beforeCalculationDate = rp.getRowCellData(dp.feeScheduleEditTable, 0)[2];
+                    rp.clickGridFilters("calculation-effective-date-select", calculationYear);
+                    rp.selectListItemByIndex(1);
+                    rp.clickButton("Calculate");
+                    eu.syncWait(3);
+                    String afterCalculationDate = rp.getRowCellData(dp.feeScheduleEditTable, 0)[2];
+                    if (rp.getNumOfGridResults() > 0) {
+                        sa.assertNotEquals(beforeCalculationDate, afterCalculationDate, "Non-Drugs: Date dropdown change did not change the table values");
+                    }
+
+                    //Save the fee schedule and verify whether its saved with inactive status
+                    //RowcellData for column Status is returning null(it should return Active/Inactive like other
+                    // columns but its not) so got the count before and after for assertion
+                    rp.clickSubmit("Save");
+                    eu.syncWait(3);
+                    rp.srhRegDrugDiagAndEnter(feeScheduleName);
+                    int feeScheCountBefore = eu.getGridRowCount(dp.feeScheduleTable);
+                    eu.syncWait(3);
+                    eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 3);
+                    rp.srhRegDrugDiagAndEnter(feeScheduleName);
+                    int feeScheCountAfter = eu.getGridRowCount(dp.feeScheduleTable);
+                    if (rp.getNumOfGridResults() > 0) {
+                        sa.assertTrue(rp.getRowCellData(dp.feeScheduleTable, 0)[0].equals(feeScheduleName),
+                                "Non-Drugs: Fee Schedule grid does not contain the newly created Fee Scheudle name");
+                        sa.assertNotEquals(feeScheCountAfter, feeScheCountBefore, "Non-Drugs: Create New Fee Schedule is not working");
                     }
 
                 }
