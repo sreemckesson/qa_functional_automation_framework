@@ -27,6 +27,10 @@ public class ClinicalContentPage extends BasePage {
     public By selectedItems = By.xpath("//div[contains(@data-testid,'selected-items')]//div");
     public By editDrugHeader = By.xpath("//div[@role='dialog']//div[contains(@class,'colorPrimary')]//h2");
 
+    //Clinical Content - Regimen Manangement
+    public By regimenTable = By.xpath("//table[@data-testid='regimen-formulary-table']");
+
+
     // constructor of the page class:
     public ClinicalContentPage(WebDriver driver) {
         this.driver = driver;
