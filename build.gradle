@@ -67,8 +67,10 @@ test{
 
 
 
-       if( project.hasProperty("qa")){
+       if( project.hasProperty("qa")) {
            environment("env", "qa")
+       } else if( project.hasProperty("dev")){
+           environment("env", "dev")
        } else if (project.hasProperty("staging")||project.hasProperty("")){
            environment("env", "staging")
        }

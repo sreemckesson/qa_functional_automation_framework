@@ -111,7 +111,7 @@ public class BaseFormularySmokeTest extends BaseTest {
                 //Sort by Patient Allowable Responsibility
                 List<Integer> beforeSortNumsList = rp.tableNumColumnList(dp.drugFormularyTable, 6);
                 List<Integer> sortNumsList = eu.sortItemsNums(beforeSortNumsList, "desc");
-                rp.clickTableHeaderForSort("Patient Allowable");
+                rp.clickTableHeaderForSort("Allowable");
                 eu.doClick(rp.srhRegimen);
                 eu.syncWait(2);
                 List<Integer> afterSortNumsList = rp.tableNumColumnList(dp.drugFormularyTable, 6);

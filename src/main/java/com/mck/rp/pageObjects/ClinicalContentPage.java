@@ -33,6 +33,12 @@ public class ClinicalContentPage extends BasePage {
     public By editRegimenRegimenName = By.xpath("//div[@data-testid='regimen-name']//textarea");
 
 
+    //Clinical Content > Diagnosis Objects
+    public By diagnosesTable = By.xpath("//table[@data-testid='diagnoses-formulary-table']");
+
+    //Organization and user management
+    public By levelRadioButton = By.xpath("//input[@type='radio']");
+    public By levelName = By.xpath("//input[@type='radio']//following::p");
 
     // constructor of the page class:
     public ClinicalContentPage(WebDriver driver) {
@@ -112,10 +118,6 @@ public class ClinicalContentPage extends BasePage {
         element.clear();
     }
 
-    @Step("Get text area name: {0}")
-    public By getTextareaField(String eleName) {
-        By element = By.xpath("//div[@data-testid='"+ eleName +"']//textarea");
-        return element;
-    }
+
 
 }
