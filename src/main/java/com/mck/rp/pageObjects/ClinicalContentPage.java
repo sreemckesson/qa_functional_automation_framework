@@ -29,6 +29,9 @@ public class ClinicalContentPage extends BasePage {
 
     //Clinical Content - Regimen Manangement
     public By regimenTable = By.xpath("//table[@data-testid='regimen-formulary-table']");
+    public By editRegimenButton = By.xpath("//a[@role='button']//span[contains(text(),'Edit Regimen')]");
+    public By editRegimenRegimenName = By.xpath("//div[@data-testid='regimen-name']//textarea");
+
 
 
     // constructor of the page class:
@@ -107,6 +110,12 @@ public class ClinicalContentPage extends BasePage {
     @Step("Clear input field text.")
     public void clearInputField(WebElement element){
         element.clear();
+    }
+
+    @Step("Get text area name: {0}")
+    public By getTextareaField(String eleName) {
+        By element = By.xpath("//div[@data-testid='"+ eleName +"']//textarea");
+        return element;
     }
 
 }
