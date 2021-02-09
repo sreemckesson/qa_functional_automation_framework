@@ -158,6 +158,9 @@ public class BasePage {
                     case "staging":
                         path = "./src/test/resources/properties/stagingConfig.properties";
                         break;
+                    case "dev":
+                        path = "./src/test/resources/properties/devConfig.properties";
+                        break;
                     default:
                         System.out.println("Please pass the correct env value....");
                         break;
