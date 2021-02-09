@@ -151,6 +151,8 @@ public class ClinicalContentPage extends BasePage {
     @Step("Clear selected Level")  //filter level does not have data-testid="clear-button". Get this added for level filter
     public By getFilterSelectClear(String dataTestId) {
         By element = By.xpath("//div[@data-testid='" + dataTestId + "']//span[@aria-label = 'clear value']");
+        return element;
+    }
 
     @Step("Get text area name: {0}")
     public By getTextareaField(String eleName) {
@@ -158,5 +160,4 @@ public class ClinicalContentPage extends BasePage {
 
         return element;
     }
-
 }
