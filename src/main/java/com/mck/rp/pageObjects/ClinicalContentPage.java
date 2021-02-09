@@ -160,4 +160,5 @@ public class ClinicalContentPage extends BasePage {
 
         return element;
     }
+
 }
