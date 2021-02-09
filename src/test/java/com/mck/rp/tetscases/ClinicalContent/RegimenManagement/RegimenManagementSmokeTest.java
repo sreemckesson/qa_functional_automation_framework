@@ -5,6 +5,7 @@ import com.mck.rp.base.BaseTest;
 import com.mck.rp.listeners.ExtentReportListener;
 import com.mck.rp.listeners.allure.AllureReportListener;
 import com.mck.rp.pageObjects.ClinicalContentPage;
+import com.mck.rp.pageObjects.DataManagementPage;
 import com.mck.rp.pageObjects.LoginPage;
 import com.mck.rp.pageObjects.RegimenAnalysisPage;
 import com.mck.rp.utilities.ElementUtil;
@@ -21,6 +22,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +35,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
     RegimenAnalysisPage rp;
     LoginPage lp;
     ClinicalContentPage cp;
+    DataManagementPage dp;
     String srhDrug = "Abatacept";
     String srhDiag = "Amyloidosis";
     String srhLastUpdated = "System";
@@ -45,6 +49,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
         lp = new LoginPage(driver);
         eu = new ElementUtil(driver);
         cp = new ClinicalContentPage(driver);
+        dp = new DataManagementPage(driver);
 
         try {
             loginPage.doLogin(prop.getProperty("mckessonUser"), prop.getProperty("mckessonPassword"));
@@ -67,10 +72,10 @@ public class RegimenManagementSmokeTest extends BaseTest {
     }
 
     @Test(priority = 1, groups = "smoke", description = "Regimen Management Page - Regimen Library - Validation of Search by Regimen Name, Diagnosis, " +
-            "Drug or last updated by Results. ")
+            "Drug or last updated by Results. Pagination")
     @Severity(SeverityLevel.NORMAL)
     @Description("Regimen Management Page - Regimen Library - Validation of Search by Regimen Name, Diagnosis," +
-            "Drug or last updated by Results.")
+            "Drug or last updated by Results. Pagination")
     public void regManagementGridSearch() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
@@ -83,6 +88,14 @@ public class RegimenManagementSmokeTest extends BaseTest {
 
             if (rp.getNumOfGridResults() > 0) {
                 int rowCountBefore = eu.getGridRowCount(cp.regimenTable);
+
+                //pagination
+                eu.syncWait(3);
+                String beforePagination = eu.getElement(rp.gridResults).getText();
+                rp.selectPaginationRows("50");
+                eu.syncWait(3);
+                String afterPagination = eu.getElement(rp.gridResults).getText();
+                sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Not working as expected");
 
                 //Search by Drug
                 rp.srhRegDrugDiagAndEnter(srhDrug);
@@ -100,14 +113,16 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 //sa.assertTrue(rp.getRowCellData(cp.regimenTable, i)[1].contains(srhDiag), "Search by Diagnosis - Incorrect Results");
                 AllureReportListener.saveLogs("Search by Diagnosis " + srhDiag + " returned: " + rp.getNumOfGridResults() + " results.");
 
-
                 //Search by Last Updated by
                 rp.srhRegDrugDiagAndEnter(srhLastUpdated);
                 int rowCountLastUpdated = eu.getGridRowCount(cp.regimenTable);
+                /*
+                 //- showing Angela's name when searched by System as System exists in Regimen Name so adding assertion to the first row only
                 for (int i = 0; i < rowCountLastUpdated; i++) {
-                    //System.out.println(rp.getRowCellData(cp.regimenTable, i)[2].contains(srhLastUpdated)); - showing Angela's name when searched by System
+                    System.out.println(rp.getRowCellData(cp.regimenTable, i)[2].contains(srhLastUpdated)); //showing Angela's name when searched by System
                     sa.assertTrue(rp.getRowCellData(cp.regimenTable, i)[2].contains(srhLastUpdated), "Search by Last Updated By - Incorrect Results");
-                }
+                }*/
+                sa.assertTrue(rp.getRowCellData(cp.regimenTable, 1)[2].contains(srhLastUpdated), "Search by Last Updated By - Incorrect Results");
                 AllureReportListener.saveLogs("Search by Drug " + srhLastUpdated + " returned: " + rp.getNumOfGridResults() + " results.");
 
                 //Search by Drug
@@ -123,7 +138,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 sa.fail();
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | InterruptedException e) {
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
@@ -172,7 +187,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 List<String> beforeSortListDate = rp.tableColumnList(cp.regimenTable, 3);
                 List<String> sortListDate = eu.sortItemsList(beforeSortListDate, "desc");
                 rp.clickTableHeaderForSort("Date Last Updated");
-                rp.clickTableHeaderForSort("Date Last Updated");
+                //rp.clickTableHeaderForSort("Date Last Updated");
                 eu.syncWait(3);
                 List<String> afterSortListDate = rp.tableColumnList(cp.regimenTable, 3);
                 //System.out.println("Before: " + beforeSortListDate + "\r\n" + "Sort: " + sortListDate + "\r\n" + "After: " + afterSortListDate);
@@ -181,12 +196,10 @@ public class RegimenManagementSmokeTest extends BaseTest {
 
             } else {
                 sa.fail();
-                //ExtentReportListener.test.get().log(Status.INFO, "No Records exists in the table");
                 AllureReportListener.saveLogs("No Records exists in the table");
             }
         } catch (NoSuchElementException | InterruptedException e) {
             e.printStackTrace();
-            //ExtentReportListener.test.get().log(Status.INFO, "Test Method Failed");
             AllureReportListener.saveLogs("Test Method Failed");
         }
         sa.assertAll();
@@ -285,66 +298,52 @@ public class RegimenManagementSmokeTest extends BaseTest {
         sa.assertAll();
     }
 
-
-    //@Test(priority = 2, groups = "smoke",description = "Practice Analysis - Practice Report - Regimen Library - Validation of results by Drug, Diagnosis and Break Even Dropdown filters")
+    @Test(priority = 4, groups = "smoke",description = "")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Practice Analysis - Practice Report - Regimen Library - Validation of results by Drug, Diagnosis and Break Even Dropdown filters")
-    public void pracAnalysisVerifyDrugDiagnosisBreakevenFilters() throws NoSuchElementException {
+    @Description("")
+    public void regimenManagementEditRegimen() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
-            rp.clickByLinkText("Practice Analysis");
-            sa.assertEquals(rp.getPageHeading(), "Find a Regimen", "Incorrect Page Heading");
-            sa.assertEquals(rp.getGridHeading(), "Analysis Criteria", "Incorrect Grid Heading");
-            eu.syncWait(2);
+            rp.clickLeftMenuItem("Clinical Content");
+            rp.clickByLinkText("Regimen Management");
+            sa.assertEquals(rp.getPageHeading(), "Regimen Management", "RM Page - Incorrect page heading");
+            sa.assertEquals(rp.getGridHeading(), "Regimens", "RM Page - Incorrect results grid heading");
+
+            //Create Regimen - Single Regimen
+            rp.clickButton("Create New");
+            dp.dataMngClickSubListItem("Create Single Regimen"); //Main Page
+            sa.assertEquals(rp.getPageHeading(), "Create a Single Regimen", "Create Regimen - Incorrect page heading");
+            sa.assertEquals(rp.getGridHeading(), "Regimen Summary", "Create Regimen - Incorrect grid heading");
+            eu.doSendKeys(cp.getTextareaField("regimen-name"), "Automation - Single Regimen" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyHHmmss")));
+            eu.doSendKeys(cp.getTextareaField("administration-notes"), "Created by Automation");
+            //eu.syncWait(1);
+            eu.scrollToBottom();
+            rp.clickButton("Cancel");
+            eu.syncWait(5);
+            rp.clickButton("Yes");
+            rp.clickButton("Yes");
+
+            sa.assertEquals(rp.getPageHeading(), "Regimen Management", "RM Page - After hitting Cancel in the Create Regimen Page the page did not navigate back to Regimen" +
+                    "Management page");
+            sa.assertEquals(rp.getGridHeading(), "Regimens", "RM Page - Incorrect results grid heading");
 
             if (rp.getNumOfGridResults() > 0) {
                 int beforeFilter = rp.getNumOfGridResults();
-                rp.clickGridFilters("break-even-select", "Break Even");
-                rp.selectFilterItemByIndex(1);
-                if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
-                    int afterBreakEvenFilter = rp.getNumOfGridResults();
-                    sa.assertNotEquals(beforeFilter, afterBreakEvenFilter, "Break Even Filter - Not working as expected");
-                    AllureReportListener.saveLogs("Number of records that match the selected Break Even filter criteria: " + rp.getNumOfGridResults());
+                rp.srhRegDrugDiagAndEnter(srhDrug);
+                String gridRowText = rp.getRowCellData(cp.regimenTable, 0)[0];
+                rp.clickGridCell("regimen-formulary-table", 1, 1);
+                eu.scrollToView(cp.editRegimenButton);
+                eu.doClick(cp.editRegimenButton);
+                eu.syncWait(5);
+                //System.out.println("Regimen Name:" + "Text"+gridRowText + "Regimen Summary Name:" + rp.getTextContent(cp.editRegimenRegimenName));
+                sa.assertTrue(rp.getPageHeading().contains("Edit a"), "Edit Regimen - Edit Regimen page is not showing after clicking");
+                sa.assertEquals(rp.getGridHeading(), "Regimen Summary", "Edit Regimen - Edit Regimen grid with edit details is not showing after clicking");
+                sa.assertEquals(gridRowText, rp.getTextContent(cp.editRegimenRegimenName),
+                 "Edit Regimen - The name from the Regimen grid and Regimen Summary are not matching");
 
-                } else {
-                    AllureReportListener.saveLogs("Break Even filter search did not return any results");
-                }
-                eu.clickWhenReady(rp.getFilterSelectClear("break-even-select"), 5);
-
-                rp.clickGridFilters("diagnosis-select", "Diagnosis");
-                rp.selectFilterItemByName("Amyloidosis");
-                if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
-                    AllureReportListener.saveLogs("Number of records that match the selected Diagnosis filter criteria: " + rp.getNumOfGridResults());
-                    int afterDiagFilter = rp.getNumOfGridResults();
-                    sa.assertNotEquals(beforeFilter, afterDiagFilter,
-                            "Diagnosis Filter - Not working as expected");
-                } else {
-                    AllureReportListener.saveLogs("Diagnosis filter search did not return any results");
-                }
-                eu.clickWhenReady(rp.getFilterSelectClear("diagnosis-select"), 5);
-
-                rp.clickGridFilters("drugs-select", "Drug");
-                rp.selectFilterItemByIndex(2);
-                if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
-                    //ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
-                    AllureReportListener.saveLogs("Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
-                    int afterDrugFilter = rp.getNumOfGridResults();
-                    sa.assertNotEquals(beforeFilter, afterDrugFilter, "Drug Filter - Not working as expected");
-                } else {
-                    //ExtentReportListener.test.get().log(Status.INFO, "Drug filter search did not return any results");
-                    AllureReportListener.saveLogs("Drug filter search did not return any results");
-                }
-                eu.clickWhenReady(rp.getFilterSelectClear("drugs-select"), 5);
-
-
-                //pagination
-                eu.syncWait(2);
-                String beforePagination = eu.getElement(rp.gridResults).getText();
-                rp.selectPaginationRows("50");
-                eu.syncWait(2);
-                String afterPagination = eu.getElement(rp.gridResults).getText();
-                sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Not working as expected");
-
+                eu.doSendKeys(cp.getTextareaField("regimen-name"), "+ Edited by Automation");
+                eu.syncWait(5);
             }
         } catch (NoSuchElementException | InterruptedException e) {
             AllureReportListener.saveLogs("Test Method Failed");
