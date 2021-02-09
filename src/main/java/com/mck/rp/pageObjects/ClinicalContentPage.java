@@ -118,6 +118,45 @@ public class ClinicalContentPage extends BasePage {
         element.clear();
     }
 
+    //move this method to RegimenPage
+    @Step("Clicking Level by name : {0}")
+    public void selectRadioSelectFilterItemByName(By locator, String name) {
+        try {
+            //WebElement option = driver.findElement(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"));
+            elementUtil.clickWhenReady(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"), 8);
+            TimeUnit.SECONDS.sleep(1);
+            // option.sendKeys(Keys.ESCAPE);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Step("Clicking Level by index: {0}")
+    public void selectRadioSelectFilterItemByIndex(By locator, int index) {
+
+        List<WebElement> levelList = elementUtil.getElements(locator);
+
+        try {
+            for (int i=0; i < levelList.size(); i++) {
+                if (i==1) {
+                    levelList.get(i).click();
+                }
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Step("Clear selected Level")  //filter level does not have data-testid="clear-button". Get this added for level filter
+    public By getFilterSelectClear(String dataTestId) {
+        By element = By.xpath("//div[@data-testid='" + dataTestId + "']//span[@aria-label = 'clear value']");
+
+    @Step("Get text area name: {0}")
+    public By getTextareaField(String eleName) {
+        By element = By.xpath("//div[@data-testid='"+ eleName +"']//textarea");
+
+        return element;
+    }
 
 }
