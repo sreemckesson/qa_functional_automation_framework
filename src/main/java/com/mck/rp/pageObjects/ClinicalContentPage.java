@@ -31,6 +31,8 @@ public class ClinicalContentPage extends BasePage {
     public By regimenTable = By.xpath("//table[@data-testid='regimen-formulary-table']");
     public By editRegimenButton = By.xpath("//a[@role='button']//span[contains(text(),'Edit Regimen')]");
     public By editRegimenRegimenName = By.xpath("//div[@data-testid='regimen-name']//textarea");
+    public By editRegimenSelectDrug = By.xpath(" //div[@role='combobox']//input[@name='items[0].drug']");
+
 
 
     //Clinical Content > Diagnosis Objects

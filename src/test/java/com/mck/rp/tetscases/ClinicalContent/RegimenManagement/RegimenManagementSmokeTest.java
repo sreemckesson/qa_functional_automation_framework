@@ -14,6 +14,7 @@ import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.testng.Assert;
@@ -298,10 +299,10 @@ public class RegimenManagementSmokeTest extends BaseTest {
         sa.assertAll();
     }
 
-    @Test(priority = 4, groups = "smoke",description = "")
+    @Test(priority = 4, groups = "smoke",description = "RM- Create a Single Regimen. Edit the created Regimen. Delete the Regimen")
     @Severity(SeverityLevel.NORMAL)
-    @Description("")
-    public void regimenManagementEditRegimen() throws NoSuchElementException {
+    @Description("RM- Create a Single Regimen. Edit the created Regimen. Delete the Regimen")
+    public void regimenManagementCreateEditDeleteRegimen() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
             rp.clickLeftMenuItem("Clinical Content");
@@ -314,24 +315,36 @@ public class RegimenManagementSmokeTest extends BaseTest {
             dp.dataMngClickSubListItem("Create Single Regimen"); //Main Page
             sa.assertEquals(rp.getPageHeading(), "Create a Single Regimen", "Create Regimen - Incorrect page heading");
             sa.assertEquals(rp.getGridHeading(), "Regimen Summary", "Create Regimen - Incorrect grid heading");
-            eu.doSendKeys(cp.getTextareaField("regimen-name"), "Automation - Single Regimen" +
-                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyHHmmss")));
+            String regimenName = "Automation - Single Regimen " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyHHmmss"));
+            eu.doSendKeys(cp.getTextareaField("regimen-name"), regimenName );
             eu.doSendKeys(cp.getTextareaField("administration-notes"), "Created by Automation");
-            //eu.syncWait(1);
-            eu.scrollToBottom();
-            rp.clickButton("Cancel");
+            eu.syncWait(2);
+            rp.clickButtonTypeStrong("Add Diagnoses");
+            rp.selectFilterItemByName("Amyloidosis");
+
+            eu.syncWait(2);
+            eu.scrollByPixel(200);
+
+            eu.doSendKeys(cp.editRegimenSelectDrug, "j7060");
+            eu.syncWait(2);
+            eu.getElement(cp.editRegimenSelectDrug).sendKeys(Keys.ENTER);
+            eu.syncWait(2);
+
+            rp.clickSubmit("Save");
             eu.syncWait(5);
-            rp.clickButton("Yes");
-            rp.clickButton("Yes");
+            //rp.clickButton("Yes");
+            //rp.clickButton("Yes");
 
             sa.assertEquals(rp.getPageHeading(), "Regimen Management", "RM Page - After hitting Cancel in the Create Regimen Page the page did not navigate back to Regimen" +
                     "Management page");
             sa.assertEquals(rp.getGridHeading(), "Regimens", "RM Page - Incorrect results grid heading");
 
             if (rp.getNumOfGridResults() > 0) {
-                int beforeFilter = rp.getNumOfGridResults();
-                rp.srhRegDrugDiagAndEnter(srhDrug);
+                //eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 5);
                 String gridRowText = rp.getRowCellData(cp.regimenTable, 0)[0];
+                sa.assertEquals(gridRowText, regimenName, "Create Regimen - Regimen name is not matching with the given name");
+                int beforeFilter = rp.getNumOfGridResults();
+
                 rp.clickGridCell("regimen-formulary-table", 1, 1);
                 eu.scrollToView(cp.editRegimenButton);
                 eu.doClick(cp.editRegimenButton);
@@ -342,8 +355,27 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 sa.assertEquals(gridRowText, rp.getTextContent(cp.editRegimenRegimenName),
                  "Edit Regimen - The name from the Regimen grid and Regimen Summary are not matching");
 
-                eu.doSendKeys(cp.getTextareaField("regimen-name"), "+ Edited by Automation");
+                eu.doSendKeys(cp.getTextareaField("regimen-name"), " + Edited by Automation");
+                eu.syncWait(2);
+                String editedRegimenName = rp.getTextContent(cp.editRegimenRegimenName);
+                System.out.println("Edited name"+editedRegimenName);
+                rp.clickSubmit("Save");
                 eu.syncWait(5);
+                String gridRowTextAfterEdit = rp.getRowCellData(cp.regimenTable, 0)[0];
+                sa.assertEquals(gridRowTextAfterEdit, editedRegimenName, "Edit Regimen - Regimen name is not matching with the given name after modifying the Regimen");
+                eu.syncWait(5);
+
+                rp.srhRegDrugDiagAndEnter(editedRegimenName);
+                rp.clickGridRowWithCheckBox("regimen-formulary-table", 1);
+                eu.syncWait(3);
+                eu.doClick(rp.getBtnTypeByTestId("delete-button"));
+                eu.syncWait(5);
+                rp.clickButton("Delete");
+                eu.syncWait(5);
+                eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 5);
+                rp.srhRegDrugDiagAndEnter(editedRegimenName);
+                sa.assertTrue(rp.getTextContent(cp.regimenTable).contains("search did not match any results"),"Regimen Delete - Delete is not working as expected");
+
             }
         } catch (NoSuchElementException | InterruptedException e) {
             AllureReportListener.saveLogs("Test Method Failed");
@@ -380,111 +412,6 @@ public class RegimenManagementSmokeTest extends BaseTest {
         sa.assertAll();
     }
 
-    /* @Test(priority = 6, description = "Practice Analysis - Regimen Summary - Validation of Total Cost, Insurer Responsibility, Patient Responsibility and Marin are updating " +
-             "with the Antiemetics, Growth Factor dropdowns items change and Cycles value change " + "\r\n" +
-             "Validation of Export functionality in Practice Report page and Regimen Summary Page.")*/
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Practice Analysis - Regimen Summary - Validation of Total Cost, Insurer Responsibility, Patient Responsibility and Marin are updating " +
-            " with the Antiemetics, Growth Factor dropdowns items change and Cycles value change " + "\r\n" +
-            "Validation of Export functionality in Practice Report page and Regimen Summary Page")
-    public void pracAnalysisSummaryAntiGfactorsCycles() throws NoSuchElementException {
-        SoftAssert sa = new SoftAssert();
 
-        try {
-            rp.clickByLinkText("Practice Analysis");
-            sa.assertEquals(rp.getPageHeading(), "Find a Regimen", "Incorrect Page Heading");
-            sa.assertEquals(rp.getGridHeading(), "Analysis Criteria", "Incorrect Grid Heading");
-            rp.srhRegDrugDiagAndEnter(srhDrug);
-
-            if (rp.getNumOfGridResults() > 0) {
-                //Export - Practice Report Main Page
-                rp.clickButton("Export");
-                rp.clickSubListItem("Export as Excel (.xlsx)");
-
-                AllureReportListener.saveLogs("Row Count: " + eu.getGridRowCount(rp.pracTable) + " and " +
-                        "Column Count " + eu.getGridColumnCount(rp.pracTable));
-
-                String regLibCost, regLibInsuRes, regLibPatRes, regLibMargin;
-                regLibCost = rp.getRowCellData(rp.pracTable, 0)[2];
-                regLibInsuRes = rp.getRowCellData(rp.pracTable, 0)[3];
-                regLibPatRes = rp.getRowCellData(rp.pracTable, 0)[4];
-                regLibMargin = rp.getRowCellData(rp.pracTable, 0)[5];
-
-                //System.out.println("Row Detail costs: " + regLibCost + regLibInsuRes + regLibPatRes + regLibMargin);
-
-                //Rows are in odd numbers 1, 3, 5 etc, even numbers are the separators in the grid
-                rp.srhRegDrugDiagAndEnter(srhDrug);
-                String gridRowText = eu.getText(rp.getGridcell("practice-analysis-table", 1, 3));
-                rp.clickGridCell("practice-analysis-table", 1, 3);
-                eu.scrollToView(rp.btnViewEditDts);
-                eu.doClick(rp.btnViewEditDts);
-                eu.syncWait(5);
-                String drugViewDts = eu.getTextcontent(rp.drugDetailsTitle);
-                sa.assertEquals(gridRowText, drugViewDts.substring(0, drugViewDts.length() - 1),
-                        "Practice Analysis selected row View and Edit details page doesnt show the selected item's name");
-
-                String antiemeticSelect = rp.summaryAntieGfactorSelectItem("antiemetic", 1);
-                //sa.assertNotEquals(rp.summaryfields(0), regLibCost);
-                sa.assertNotEquals(rp.summaryfields(1), regLibInsuRes,
-                        "Summary Antiemetic filter - Insurer Responsibility - Not working as expected ");
-                sa.assertNotEquals(rp.summaryfields(2), regLibPatRes,
-                        "Summary Antiemetic filter - Patient Responsibility - Not working as expected");
-                sa.assertNotEquals(rp.summaryfields(3), regLibMargin,
-                        "Summary Antiemetic filter - Margin - Not working as expected");
-                sa.assertTrue(rp.getTextContent(rp.summaryDrugTable).toLowerCase().contains(rp.subString(antiemeticSelect, " ", 0).toLowerCase()));
-
-                String growthFactorSelect = rp.summaryAntieGfactorSelectItem("growthFactor", 1);
-                TimeUnit.SECONDS.sleep(2);
-                sa.assertNotEquals(rp.summaryfields(0), regLibCost,
-                        "Summary Growth Factor filter - Cost - Not working as expected ");
-                sa.assertNotEquals(rp.summaryfields(1), regLibInsuRes,
-                        "Summary Antiemetic filter - Insurer Responsibility - Not working as expected ");
-                sa.assertNotEquals(rp.summaryfields(2), regLibPatRes,
-                        "Summary Antiemetic filter - Patient Responsibility - Not working as expected ");
-                sa.assertNotEquals(rp.summaryfields(3), regLibMargin,
-                        "Summary Antiemetic filter - Margin - Not working as expected");
-                sa.assertTrue(rp.getTextContent(rp.summaryDrugTable).toLowerCase().contains(rp.subString(growthFactorSelect, " ", 0).toLowerCase()));
-
-                rp.sendKeysByAction("numberOfCycles", "10");
-                eu.getElement(rp.getInputField("numberOfCycles")).sendKeys(Keys.TAB);
-                TimeUnit.SECONDS.sleep(2);
-                sa.assertNotEquals(rp.summaryfields(0), regLibCost,
-                        "Summary Number of Cycles - Cost - Not working as expected");
-                sa.assertNotEquals(rp.summaryfields(1), regLibInsuRes,
-                        "Summary Antiemetic filter - Insurer Responsibility - Not working as expected");
-                sa.assertNotEquals(rp.summaryfields(2), regLibPatRes,
-                        "Summary Antiemetic filter - Patient Responsibility - Not working as expected ");
-                sa.assertNotEquals(rp.summaryfields(3), regLibMargin,
-                        "Summary Antiemetic filter - Margin - Not working as expected ");
-
-                //Export - Summary Page
-                rp.clickButton("Export");
-                rp.clickSubListItem("Detailed Practice Report (.xlsx)");
-
-                //Add Drug and Non Drug
-                eu.scrollToView(rp.summaryAddDrug);
-                eu.clickWhenReady(rp.summaryAddDrug, 6);
-                sa.assertTrue(rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Add Drug"));
-                if (rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Add Drug")) {
-                    rp.clickButton("Cancel");
-                }
-
-                eu.scrollToView(rp.summaryAddNondrug);
-                eu.clickWhenReady(rp.summaryAddNondrug, 6);
-                sa.assertTrue(rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Add Non-Drug"));
-                if (rp.getTextContent(rp.addDrugNondrugDialogH2).contains("Add Non-Drug")) {
-                    rp.clickButton("Cancel");
-                }
-
-                eu.clickWhenReady(rp.getConfigFieldsButton("drug"), 5);
-            } else {
-                sa.fail();
-                AllureReportListener.saveLogs("No Records exists in the table");
-            }
-        } catch (NoSuchElementException | InterruptedException e) {
-            AllureReportListener.saveLogs("Test method Failed");
-        }
-        sa.assertAll();
-    }
 }
 

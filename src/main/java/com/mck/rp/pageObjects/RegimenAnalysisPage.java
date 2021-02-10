@@ -169,6 +169,18 @@ public class RegimenAnalysisPage extends BasePage {
         return btn;
     }
 
+    //Regimen Manangement button type Button and Strong
+    public By getBtnTypeStrong(String eleName) {
+        By btn = By.xpath("//button[@type='button']//Strong[contains(text(),'" + eleName + "')]");
+        return btn;
+    }
+
+    //Regimen Manangement button type Button and And DataTestid
+    public By getBtnTypeByTestId(String eleName) {
+        By btn = By.xpath("//button[@data-testid='" + eleName + "']");
+        return btn;
+    }
+
     /**
      * @param eleName
      * @return
@@ -429,6 +441,19 @@ public class RegimenAnalysisPage extends BasePage {
         }
     }
 
+    /**
+     * @param btnName
+     */
+    @Step("Clicking on the button (button type: Button)  with text: {0}")
+    public void clickButtonTypeStrong(String btnName) {
+        try {
+            elementUtil.clickWhenReady(getBtnTypeStrong(btnName), 8);
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * @param ddTestid
@@ -444,6 +469,20 @@ public class RegimenAnalysisPage extends BasePage {
         }
     }
 
+    //table[@data-testid='regimen-formulary-table']//tr[1]//span[@data-testid='row-checkbox']
+
+    /**
+     * @param tableId
+     * @param rowId
+     */
+    @Step("Clicking on Grid CheckBoxes with TableId: {0} and in Row: {1}")
+    public void clickGridRowWithCheckBox(String tableId, int rowId) {
+        try {
+            elementUtil.clickWhenReady(By.xpath("//table[@data-testid='" + tableId + "']//tr["+ rowId +"]//span[@data-testid='row-checkbox']"), 5);
+        } catch (NoSuchElementException  e) {
+            e.printStackTrace();
+        }
+    }
     /**
      *
      */
