@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class DataManagementPage extends BasePage {
 
     private final WebDriver driver;
+
     //BaseForumulary Objects
     public By drugFormularyTable = By.xpath("//table[@data-testid='drug-formulary-table']");
     public By nonDrugFormularyTable = By.xpath("//table[@data-testid='non-drug-formulary-table']");
@@ -21,36 +22,43 @@ public class DataManagementPage extends BasePage {
     public By calculationMethodDropdown = By.xpath("//div[@data-testid='select-calculation-method']");
     public By ddTheraputicClass = By.xpath("//div[@data-testid='select-therapeutic-classes']");
     public By ddClassification = By.xpath("//div[@data-testid='filter-classification']");
+
     //Works for both Drug and nonDrug Page in BaseFormulary
     public By ddDrugCostCal = By.xpath("//div[@data-testid='select-calculation-method']");
     public By drugDtsTableRows = By.xpath("//table[@data-testid='drug-details-table']//tr");
+
     //dropdowns/filters in Supportive Care Regimen
     public By ddRegimenClass = By.xpath("//div[@data-testid='regimen-class-select']");
     public By btnDrugDtsCustomRadio = By.xpath("//table[@data-testid='custom-cost-table']//input[@type = 'radio' and not(@disabled)]");
+
     //Base Formulary
     //table[@data-testid='custom-cost-table']//div//span - Custom button in expanded row
     //td[@data-testid='table-row-details']//p//strong
     public By ddLastUpdatedBy = By.xpath("//div[@data-testid='last-updated-by-select']");
     public By ddStatus = By.xpath("//div[@data-testid='status-select']");
     public By suppCareRegimenSummaryName = By.xpath("//div[@data-testid='regimen-name']");
+    public By createNew = By.xpath("//a[@role='button']//span[contains(text(),'Create New')]");
+
     //Practice and User Management - Objects
     public By userTable = By.xpath("//table[@data-testid='table']");
+    public By unitOfMeasure = By.xpath("//div[@data-testname='systemOfMeasurement']");
+    public By bsaCalcMethod = By.xpath("//div[@data-testname='bsaMethod']");
+    public By timePeriodDays = By.xpath("//div[@data-testname='newRegimenPeriodInDays']");
 
 
-    //This is for getting the message from Regimen Summary page Supportive care message
+    ElementUtil elementUtil;
+
+    //This is for getting the message from Regimen Summary page Supportive care message and users page
     // div[@data-testid='regimen-summary-supportive-care']//div//span[contains(@class,'colorPrimary')]
     //div[@data-testid='regimen-summary-supportive-care']//div[@data-testname='growthFactors']
+    //span[contains(text(),'McKesson User')]
+    //input[@type='radio' and @checked] - To check which button is checked in customer and mckesson
 
     //Need to add remove drugs/nondrugs table items - Waiting for table ids change in both tables.
     //div[@data-testid='drug-name']
     //button[@data-testid='remove-button']
     //form[@data-testid='drug-table-container']//button[@data-testid='configure-fields']
     //div[@data-testid='configure-fields']//span[contains(@class,'labelSmall')] -- Fields inside the configurefields
-    public By createNew = By.xpath("//a[@role='button']//span[contains(text(),'Create New')]");
-    ElementUtil elementUtil;
-    //input[@type='radio' and @checked] - To check which button is checked in customer and mckesson
-
-    //span[contains(text(),'McKesson User')]
 
     // constructor of the page class:
     public DataManagementPage(WebDriver driver) {
@@ -99,7 +107,7 @@ public class DataManagementPage extends BasePage {
                 }
             }
         } catch (StaleElementReferenceException e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -203,13 +211,13 @@ public class DataManagementPage extends BasePage {
 
     //move this to regimen analysis page:
     public By getTextArea(String eleName) {
-        By element = By.xpath("//div[@data-testid='"+ eleName + "']//textarea");
+        By element = By.xpath("//div[@data-testid='" + eleName + "']//textarea");
         return element;
     }
 
     //move this to regimen analysis page:
     public By getBtnTypeButton(String type, String name) {
-        By btn = By.xpath("//button[@type='" + type + "' and @data-testid='"+ name + "']");
+        By btn = By.xpath("//button[@type='" + type + "' and @data-testid='" + name + "']");
         return btn;
     }
 }
