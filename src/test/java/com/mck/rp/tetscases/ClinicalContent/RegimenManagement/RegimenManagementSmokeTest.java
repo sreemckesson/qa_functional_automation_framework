@@ -98,6 +98,11 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 String afterPagination = eu.getElement(rp.gridResults).getText();
                 sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Not working as expected");
 
+                //Export to Excel - Need to add Assertion
+                rp.clickButton("Export");
+                rp.clickSubListItem("Export as Excel (.xlsx)");
+                //AllureReportListener.saveLogs("Export to Excel - Working as expected");
+
                 //Search by Drug
                 rp.srhRegDrugDiagAndEnter(srhDrug);
                 int rowCountDrug = eu.getGridRowCount(cp.regimenTable);
@@ -105,7 +110,6 @@ public class RegimenManagementSmokeTest extends BaseTest {
                     sa.assertTrue(rp.getRowCellData(cp.regimenTable, i)[0].contains(srhDrug), "Search by Drug - Incorrect Results");
                 }
                 AllureReportListener.saveLogs("Search by Drug " + srhDrug + " returned: " + rp.getNumOfGridResults() + " results.");
-
 
                 //Search by Diagnosis
                 rp.srhRegDrugDiagAndEnter(srhDiag);
@@ -215,7 +219,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
         SoftAssert sa = new SoftAssert();
         try {
             Assert.assertTrue(rp.isLogoutExist());
-            rp.clickLeftMenuItem("Clinical Content");
+            //rp.clickLeftMenuItem("Clinical Content");
             rp.clickByLinkText("Regimen Management");
             sa.assertEquals(rp.getPageHeading(), "Regimen Management", "Incorrect page heading");
             sa.assertEquals(rp.getGridHeading(), "Regimens", "Incorrect results grid heading");
@@ -305,8 +309,8 @@ public class RegimenManagementSmokeTest extends BaseTest {
     public void regimenManagementCreateEditDeleteRegimen() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
-            rp.clickLeftMenuItem("Clinical Content");
-            rp.clickByLinkText("Regimen Management");
+            //rp.clickLeftMenuItem("Clinical Content");
+            //rp.clickByLinkText("Regimen Management");
             sa.assertEquals(rp.getPageHeading(), "Regimen Management", "RM Page - Incorrect page heading");
             sa.assertEquals(rp.getGridHeading(), "Regimens", "RM Page - Incorrect results grid heading");
 
@@ -318,33 +322,27 @@ public class RegimenManagementSmokeTest extends BaseTest {
             String regimenName = "Automation - Single Regimen " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyHHmmss"));
             eu.doSendKeys(cp.getTextareaField("regimen-name"), regimenName );
             eu.doSendKeys(cp.getTextareaField("administration-notes"), "Created by Automation");
-            eu.syncWait(2);
+            //eu.syncWait(2);
             rp.clickButtonTypeStrong("Add Diagnoses");
             rp.selectFilterItemByName("Amyloidosis");
-
-            eu.syncWait(2);
+            //eu.syncWait(2);
             eu.scrollByPixel(200);
-
             eu.doSendKeys(cp.editRegimenSelectDrug, "j7060");
             eu.syncWait(2);
             eu.getElement(cp.editRegimenSelectDrug).sendKeys(Keys.ENTER);
-            eu.syncWait(2);
-
+            //eu.syncWait(2);
             rp.clickSubmit("Save");
             eu.syncWait(5);
-            //rp.clickButton("Yes");
-            //rp.clickButton("Yes");
-
             sa.assertEquals(rp.getPageHeading(), "Regimen Management", "RM Page - After hitting Cancel in the Create Regimen Page the page did not navigate back to Regimen" +
                     "Management page");
             sa.assertEquals(rp.getGridHeading(), "Regimens", "RM Page - Incorrect results grid heading");
 
+            //Edit the above created Regimen
             if (rp.getNumOfGridResults() > 0) {
                 //eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 5);
                 String gridRowText = rp.getRowCellData(cp.regimenTable, 0)[0];
                 sa.assertEquals(gridRowText, regimenName, "Create Regimen - Regimen name is not matching with the given name");
                 int beforeFilter = rp.getNumOfGridResults();
-
                 rp.clickGridCell("regimen-formulary-table", 1, 1);
                 eu.scrollToView(cp.editRegimenButton);
                 eu.doClick(cp.editRegimenButton);
@@ -354,7 +352,6 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 sa.assertEquals(rp.getGridHeading(), "Regimen Summary", "Edit Regimen - Edit Regimen grid with edit details is not showing after clicking");
                 sa.assertEquals(gridRowText, rp.getTextContent(cp.editRegimenRegimenName),
                  "Edit Regimen - The name from the Regimen grid and Regimen Summary are not matching");
-
                 eu.doSendKeys(cp.getTextareaField("regimen-name"), " + Edited by Automation");
                 eu.syncWait(2);
                 String editedRegimenName = rp.getTextContent(cp.editRegimenRegimenName);
@@ -363,13 +360,14 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 eu.syncWait(5);
                 String gridRowTextAfterEdit = rp.getRowCellData(cp.regimenTable, 0)[0];
                 sa.assertEquals(gridRowTextAfterEdit, editedRegimenName, "Edit Regimen - Regimen name is not matching with the given name after modifying the Regimen");
-                eu.syncWait(5);
+                //eu.syncWait(5);
 
+                //Deleted the above edited Regimen
                 rp.srhRegDrugDiagAndEnter(editedRegimenName);
                 rp.clickGridRowWithCheckBox("regimen-formulary-table", 1);
                 eu.syncWait(3);
                 eu.doClick(rp.getBtnTypeByTestId("delete-button"));
-                eu.syncWait(5);
+                eu.syncWait(3);
                 rp.clickButton("Delete");
                 eu.syncWait(5);
                 eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 5);
@@ -382,36 +380,5 @@ public class RegimenManagementSmokeTest extends BaseTest {
         }
         sa.assertAll();
     }
-
-    // @Test(priority = 5,groups = "smoke", description = "Practice Analysis - Practice Report - Compare Regimens - Validation of compare Regimens functionality.")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Practice Analysis Page - Practice Report - Compare Regimens - Validation of compare Regimens functionality.")
-    public void pracAnalysisCompareRegimens() throws NoSuchElementException {
-        SoftAssert sa = new SoftAssert();
-        int rowsToCompare = 4;
-        try {
-            rp.clickTabs("Practice Analysis");
-            sa.assertEquals(rp.getPageHeading(), "Find a Regimen", "Incorrect Page Heading");
-            sa.assertEquals(rp.getGridHeading(), "Analysis Criteria", "Incorrect Grid Heading");
-            rp.srhRegDrugDiagAndEnter(srhDrug);
-            if (rp.getNumOfGridResults() > 0) {
-                rp.pracTableAddToCompare(rp.pracTable, rowsToCompare);
-                rp.clickByPartialLinkText("Compare");
-                String drugViewDts = eu.getTextcontent(rp.drugDetailsTitle);
-                sa.assertEquals(drugViewDts, "Comparison", "Incorrect heading for Comparison page Details page");
-                sa.assertEquals(eu.getElement(rp.comparisonTableH1).getText(), String.valueOf(rowsToCompare),
-                        "Comparison page details page doesnt show the right number of selected rows to compare ");
-            } else {
-                sa.fail();
-                AllureReportListener.saveLogs("No Records exists in the table");
-            }
-        } catch (NoSuchElementException e) {
-            //ExtentReportListener.test.get().log(Status.INFO, "Test Method Failed.");
-            AllureReportListener.saveLogs("Test method Failed");
-        }
-        sa.assertAll();
-    }
-
-
 }
 
