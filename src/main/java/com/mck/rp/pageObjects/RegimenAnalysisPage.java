@@ -169,6 +169,19 @@ public class RegimenAnalysisPage extends BasePage {
         return btn;
     }
 
+    /**
+     * @param inputName
+     * @return
+     */
+    //Pracrtice Configuration - Configure Analysis Views buttons- check if the checkboxes are checked or not
+    public boolean getCheckboxChecked(String inputName) {
+        boolean flag = false;
+        WebElement inputBtn = driver.findElement(By.xpath("//input[@name = '" + inputName + "']//parent::span//parent::span[contains(@class,'MuiButton')]"));
+        flag = inputBtn.getAttribute("className").contains("checked");
+        return flag;
+    }
+
+
     //Regimen Manangement button type Button and Strong
     public By getBtnTypeStrong(String eleName) {
         By btn = By.xpath("//button[@type='button']//Strong[contains(text(),'" + eleName + "')]");
@@ -272,14 +285,14 @@ public class RegimenAnalysisPage extends BasePage {
 
     /**
      * Click on check boxes, radio buttons, input boxes, buttons or any other elements where Span tag's text matches the given text
+     *
      * @param text
      */
 
-    public void clickSpanText(String text){
+    public void clickSpanText(String text) {
         try {
             elementUtil.clickWhenReady(By.xpath("//span[contains(text(),'" + text + "')]"), 5);
-        } catch(NoSuchElementException e)
-        {
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
     }
@@ -345,13 +358,14 @@ public class RegimenAnalysisPage extends BasePage {
      * displayed. If its displayed then clicks again (Some dialog buttons need to be clicked twice to be able
      * to take effect) - Actions is working, commented the button check once clicked, uncomment if the click
      * is not working.
+     *
      * @param btnName
      */
     public void clickDialogBtn(String btnName) {
         try {
             elementUtil.doActionsClick(getDialogBtn(btnName));
-           // if (elementUtil.isElementDisplayed(getDialogBtn(btnName), 5))
-           //     elementUtil.doActionsClick(getDialogBtn(btnName));
+            // if (elementUtil.isElementDisplayed(getDialogBtn(btnName), 5))
+            //     elementUtil.doActionsClick(getDialogBtn(btnName));
         } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
@@ -454,7 +468,6 @@ public class RegimenAnalysisPage extends BasePage {
         }
     }
 
-
     /**
      * @param ddTestid
      * @param ddName
@@ -478,11 +491,12 @@ public class RegimenAnalysisPage extends BasePage {
     @Step("Clicking on Grid CheckBoxes with TableId: {0} and in Row: {1}")
     public void clickGridRowWithCheckBox(String tableId, int rowId) {
         try {
-            elementUtil.clickWhenReady(By.xpath("//table[@data-testid='" + tableId + "']//tr["+ rowId +"]//span[@data-testid='row-checkbox']"), 5);
-        } catch (NoSuchElementException  e) {
+            elementUtil.clickWhenReady(By.xpath("//table[@data-testid='" + tableId + "']//tr[" + rowId + "]//span[@data-testid='row-checkbox']"), 5);
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
         }
     }
+
     /**
      *
      */
