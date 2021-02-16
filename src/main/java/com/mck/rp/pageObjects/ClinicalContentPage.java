@@ -40,7 +40,13 @@ public class ClinicalContentPage extends BasePage {
 
     //Organization and user management
     public By levelRadioButton = By.xpath("//input[@type='radio']");
-    public By levelName = By.xpath("//input[@type='radio']//following::p");
+    public By levelRadioButtonName = By.xpath("//input[@type='radio']//following::p");
+    public By levelCheckBoxs = By.xpath("//li//input[@type='checkbox']");
+    public By levelCheckBoxNames = By.xpath("//li//input[@type='checkbox']//following::p");
+    public By defaultLocationsRadioButton = By.xpath("//li//input[@type='radio']");
+    public By userDetails = By.xpath("//h2[contains(text(), 'User Details')]");
+    public By permissionsBlock = By.xpath("//p[contains(@class, 'MuiTypography-colorInherit')]");
+
 
     // constructor of the page class:
     public ClinicalContentPage(WebDriver driver) {
@@ -121,26 +127,25 @@ public class ClinicalContentPage extends BasePage {
     }
 
     //move this method to RegimenPage
-    @Step("Clicking Level by name : {0}")
-    public void selectRadioSelectFilterItemByName(By locator, String name) {
+    @Step("Clicking Level Radio by name : {0}")
+    public void selectRadioSelectFilterItemByName(String name) {
         try {
-            //WebElement option = driver.findElement(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"));
-            elementUtil.clickWhenReady(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"), 8);
+            //elementUtil.clickWhenReady(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"), 8);
+            elementUtil.doClick(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[2]/input[@type='radio']"));
             TimeUnit.SECONDS.sleep(1);
-            // option.sendKeys(Keys.ESCAPE);
         } catch (NoSuchElementException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @Step("Clicking Level by index: {0}")
-    public void selectRadioSelectFilterItemByIndex(By locator, int index) {
+    @Step("Clicking Level by index: {1}")
+    public void selectFilterItemByIndex(By locator, int index) {
 
         List<WebElement> levelList = elementUtil.getElements(locator);
 
         try {
             for (int i=0; i < levelList.size(); i++) {
-                if (i==1) {
+                if (i==index) {
                     levelList.get(i).click();
                 }
             }
@@ -149,6 +154,46 @@ public class ClinicalContentPage extends BasePage {
         }
 
     }
+
+    //move this method to RegimenPage
+    @Step("Clicking Level Checkbox by name : {0}")
+    public void selectCheckboxFilterItemByName(String name) {
+        try {
+            elementUtil.doClick(By.xpath("//p[contains(text(), '"+ name +"')]//preceding::span[1]/input[@type='checkbox']"));
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //move this method to RegimenPage
+    @Step("Click list value from dropdown field by Name: {0}")
+    public void selectDropdownListValueByName(String name) {
+        try {
+            elementUtil.clickWhenReady(By.xpath("//p[contains(text(), '" + name + "')] "), 8);
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Step("Select dropdown : {0}")
+    public By getDropdownByName(String dataTestId) {
+        By element = By.xpath("//div[@data-testid = '" + dataTestId + "']");
+        return element;
+    }
+
+    @Step("Get Dropdown selected value : {0}")
+    public By getDropdownSelectedValue(String dataTestId) {
+        By element = By.xpath("//div[@data-testid = '" + dataTestId + "']//span//span");
+        return element;
+    }
+
+    public By getSpanTextElement(String text){
+        By element = By.xpath("//span[contains(text(), '"+ text + "')]");
+        return element;
+    }
+
 
     @Step("Clear selected Level")  //filter level does not have data-testid="clear-button". Get this added for level filter
     public By getFilterSelectClear(String dataTestId) {
@@ -163,4 +208,9 @@ public class ClinicalContentPage extends BasePage {
         return element;
     }
 
+    public By getLinkInTable(int row, int col){
+
+        By element = By.xpath("//table[@data-testid='table']//td[@data-row-index = " + row + " and @data-col-index= " + col + "]//button/span");
+        return element;
+    }
 }

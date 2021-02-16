@@ -1,22 +1,31 @@
 package com.mck.rp.base;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-
 import com.aventstack.extentreports.Status;
 import com.mck.rp.listeners.ExtentReportListener;
 import io.qameta.allure.Step;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
-
 import com.mck.rp.pageObjects.LoginPage;
 
 public class BaseTest {
 
     public WebDriver driver;
-
     public BasePage basePage;
     public LoginPage loginPage;
     public Properties prop;
+
+    @BeforeSuite
+    public void setUpBeforeSuite() {
+        try {
+            FileUtils.cleanDirectory(new File("./src/test/resources/Downloads"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Parameters("browser")
     @BeforeClass
