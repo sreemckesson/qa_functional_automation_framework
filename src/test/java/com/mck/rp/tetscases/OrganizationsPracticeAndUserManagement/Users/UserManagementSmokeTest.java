@@ -134,7 +134,7 @@ public class UserManagementSmokeTest extends BaseTest {
                     rp.selectPaginationRows("10");
                     eu.syncWait(1);
                     String afterPagination = eu.getElement(rp.gridResults).getText();
-                    sa.assertNotEquals(beforePagination, afterPagination);
+                    sa.assertNotEquals(beforePagination, afterPagination, "Incorrect number of records per page.");
 
                     //sort by name
                     rp.srhRegDrugDiagAndEnter("rp");
@@ -163,12 +163,12 @@ public class UserManagementSmokeTest extends BaseTest {
                     eu.syncWait(1);
                     rp.clickGridCell("table", 1, 1);
                     eu.syncWait(1);
-                    sa.assertEquals(rp.getPageHeading(), "User Account");
-                    sa.assertEquals(rp.getGridHeading(), "User Details");
+                    sa.assertEquals(rp.getPageHeading(), "User Account", "Incorrect page heading");
+                    sa.assertEquals(rp.getGridHeading(), "User Details", "Incorrect grid heading");
                     String firstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
                     String lastName = eu.getAttribute(rp.getInputField("lastName"), "defaultValue");
                     String nameFromDetails = lastName + ", " + firstName;
-                    sa.assertEquals(nameFromTable, nameFromDetails);
+                    sa.assertEquals(nameFromTable, nameFromDetails, "Incorrect selected user name in details");
                     eu.scrollToBottom();
                     rp.clickButton("Cancel");
                     eu.syncWait(1);
@@ -203,7 +203,7 @@ public class UserManagementSmokeTest extends BaseTest {
             int beforeCreatingUserCount = rp.getNumOfGridResults();
             String newUser = "testuser" + + rand.nextInt(1000);
             String email = newUser + "@" + newUser + ".com";
-
+            AllureReportListener.saveLogs("New " + userType + " user to add: " + newUser + " - Email -" + email);
             eu.doClick(dp.createNew);
             eu.syncWait(1);
             sa.assertEquals(rp.getPageHeading(), "User Account", "User Account page not displayed");
@@ -274,6 +274,7 @@ public class UserManagementSmokeTest extends BaseTest {
             //validate total user count is updated
             rp.srhRegDrugDiagAndEnter("");
             int afterCreatingUserCount = rp.getNumOfGridResults();
+            AllureReportListener.saveLogs("Before user count " + beforeCreatingUserCount + " After user count: " + afterCreatingUserCount);
             sa.assertTrue(afterCreatingUserCount>beforeCreatingUserCount, "User count incorrect after adding user.");
             rp.clickLeftMenuItem("Practice & User Management");
 
@@ -304,14 +305,16 @@ public class UserManagementSmokeTest extends BaseTest {
 
             if(eu.getGridRowCount(dp.userTable) > 0) {
                 String nameInUserList = rp.getRowCellData(dp.userTable, 0)[0];
+                AllureReportListener.saveLogs("User to edit " + nameInUserList);
                 rp.clickGridCell("table", 1, 1);
                 eu.syncWait(1);
                 String firstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
                 String lastName = eu.getAttribute(rp.getInputField("lastName"), "defaultValue");
                 String nameFromDetails = lastName + ", " + firstName;
-                sa.assertEquals(nameInUserList, nameFromDetails);
+                sa.assertEquals(nameInUserList, nameFromDetails, "Selected user account name is not displayed in user account page.");
                 eu.doSendKeys(rp.getInputField("firstName"), "Updated");
                 String afterUpdatefirstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
+                AllureReportListener.saveLogs("User name after edit " + afterUpdatefirstName);
                 eu.scrollToBottom();
                 eu.syncWait(1);
                 rp.clickSubmit("Save");
