@@ -3,6 +3,8 @@ package com.mck.rp.pageObjects;
 import com.mck.rp.base.BasePage;
 import com.mck.rp.utilities.ElementUtil;
 import io.qameta.allure.Step;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
@@ -213,4 +215,15 @@ public class ClinicalContentPage extends BasePage {
         By element = By.xpath("//table[@data-testid='table']//td[@data-row-index = " + row + " and @data-col-index= " + col + "]//button/span");
         return element;
     }
+
+    //Move this to ElementUtil
+    public List<String> sortItemsListIgnoreCase(List<String> listOfString, String order) {
+        if (order.equalsIgnoreCase("descending") || order.equalsIgnoreCase("desc")) {
+            Collections.sort(listOfString, String.CASE_INSENSITIVE_ORDER.reversed());
+        } else {
+            Collections.sort(listOfString, String.CASE_INSENSITIVE_ORDER);
+        }
+        return listOfString;
+    }
+
 }

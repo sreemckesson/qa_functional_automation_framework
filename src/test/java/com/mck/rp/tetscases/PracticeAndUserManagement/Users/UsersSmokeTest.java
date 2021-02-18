@@ -13,6 +13,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -109,6 +110,28 @@ public class UsersSmokeTest extends BaseTest {
                     AllureReportListener.saveLogs("Grid Results before Pagination: " + beforePagination);
                     AllureReportListener.saveLogs("Grid Results after Pagination: " + afterPagination);
                     sa.assertNotEquals(beforePagination, afterPagination, "Pagination - Results are not updated for pagination");
+
+                    //sort by name
+                    rp.srhRegDrugDiagAndEnter("rp");
+                    List<String> beforeSortList = rp.tableColumnList(dp.userTable, 0);
+                    System.out.println("NameSort: Before: " + beforeSortList);
+                    List<String> sortList = cp.sortItemsListIgnoreCase(beforeSortList, "desc");
+                    rp.clickTableHeaderForSort("Last, First");
+                    eu.syncWait(2);
+                    List<String> afterSortList = rp.tableColumnList(dp.userTable, 0);
+                    System.out.println("EmailSort: Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
+                    sa.assertEquals(sortList, afterSortList, "Incorrect sort by user name result");
+                    rp.clickTableHeaderForSort("Last, First");
+
+                    //sort by email
+                    beforeSortList = rp.tableColumnList(dp.userTable, 1);
+                    sortList = cp.sortItemsListIgnoreCase(beforeSortList, "desc");
+                    rp.clickTableHeaderForSort("Email");
+                    eu.syncWait(2);
+                    afterSortList = rp.tableColumnList(dp.userTable, 1);
+                    System.out.println("Email: Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
+                    sa.assertEquals(sortList, afterSortList, "Incorrect sort by user email result");
+                    rp.clickTableHeaderForSort("Email");
 
                     //view user details
                     rp.srhRegDrugDiagAndEnter(srhUser);

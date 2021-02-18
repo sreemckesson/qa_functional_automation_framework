@@ -139,21 +139,24 @@ public class UserManagementSmokeTest extends BaseTest {
                     //sort by name
                     rp.srhRegDrugDiagAndEnter("rp");
                     List<String> beforeSortList = rp.tableColumnList(dp.userTable, 0);
-                    List<String> sortList = eu.sortItemsList(beforeSortList, "desc");
+                    List<String> sortList = cp.sortItemsListIgnoreCase(beforeSortList, "desc");
                     rp.clickTableHeaderForSort("Last, First");
                     eu.syncWait(2);
                     List<String> afterSortList = rp.tableColumnList(dp.userTable, 0);
-                    System.out.println("NameSort: Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
+                    System.out.println("Name Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
                     sa.assertEquals(sortList, afterSortList, "Incorrect sort by user name result");
                     rp.clickTableHeaderForSort("Last, First");
 
                     //sort by email
+                    rp.srhRegDrugDiagAndEnter("");
+                    rp.srhRegDrugDiagAndEnter("automation");
+                    eu.syncWait(2);
                     beforeSortList = rp.tableColumnList(dp.userTable, 1);
-                    sortList = eu.sortItemsList(beforeSortList, "desc");
+                    sortList = cp.sortItemsListIgnoreCase(beforeSortList, "desc");
                     rp.clickTableHeaderForSort("Email");
                     eu.syncWait(2);
                     afterSortList = rp.tableColumnList(dp.userTable, 1);
-                    System.out.println("Email: Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
+                    System.out.println("Email Before: " + beforeSortList + "\r\n" + "Sort: " + sortList + "\r\n" + "After: " + afterSortList);
                     sa.assertEquals(sortList, afterSortList, "Incorrect sort by user email result");
                     rp.clickTableHeaderForSort("Email");
 
@@ -201,7 +204,7 @@ public class UserManagementSmokeTest extends BaseTest {
             sa.assertEquals(rp.getGridHeading(), "Users", "Grid Header incorrect in users tab.");
 
             int beforeCreatingUserCount = rp.getNumOfGridResults();
-            String newUser = "testuser" + + rand.nextInt(1000);
+            String newUser = "testautouser" + + rand.nextInt(1000);
             String email = newUser + "@" + newUser + ".com";
             AllureReportListener.saveLogs("New " + userType + " user to add: " + newUser + " - Email -" + email);
             eu.doClick(dp.createNew);
@@ -301,7 +304,7 @@ public class UserManagementSmokeTest extends BaseTest {
             eu.syncWait(1);
             rp.clickGridFilters("user-type-select", "Type");
             rp.selectFilterItemByIndex(0);
-            rp.srhRegDrugDiagAndEnter("testuser");
+            rp.srhRegDrugDiagAndEnter("testautouser");
 
             if(eu.getGridRowCount(dp.userTable) > 0) {
                 String nameInUserList = rp.getRowCellData(dp.userTable, 0)[0];
