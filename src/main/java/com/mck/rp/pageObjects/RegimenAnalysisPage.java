@@ -660,6 +660,7 @@ public class RegimenAnalysisPage extends BasePage {
         try {
             Actions a = new Actions(driver);
             a.click(elementUtil.getElement(getInputField(srhField))).build().perform();
+            elementUtil.getElement(getInputField(srhField)).sendKeys(Keys.END);
             int len = elementUtil.getElement(getInputField(srhField)).getAttribute("value").length();
             for (int i = 0; i < len; i++) {
                 elementUtil.getElement(getInputField(srhField)).sendKeys(Keys.BACK_SPACE);

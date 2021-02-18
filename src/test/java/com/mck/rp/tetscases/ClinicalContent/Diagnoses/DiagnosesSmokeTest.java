@@ -226,12 +226,13 @@ public class DiagnosesSmokeTest extends BaseTest {
             rp.clickByLinkText("Diagnoses");
             eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 2);
             rp.srhRegDrugDiagAndEnter(addDiagnoses);
+            eu.syncWait(1);
             if (eu.getGridRowCount(cp.diagnosesTable) == 1) {
                 sa.assertTrue(rp.getRowCellData(cp.diagnosesTable, 0)[0].contains(addDiagnoses), "Incorrect new diagnosis name");
                 AllureReportListener.saveLogs("Diagnosis added: " + addDiagnoses);
             } else {
-                sa.fail();
                 AllureReportListener.saveLogs("This search returned more than 1 row and not expected to return more than row. Pl check. ");
+                sa.fail();
             }
 
             //eu.clickWhenReady(rp.getFilterSelectClear("status-select"), 2);
@@ -242,7 +243,7 @@ public class DiagnosesSmokeTest extends BaseTest {
                 "Grid results before diagnosis is added: " + beforeGridResults + "after diagnosis is added: " + afterGridResults);
             rp.clickLeftMenuItem("Clinical Content");
 
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | InterruptedException e) {
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
         sa.assertAll();
@@ -259,7 +260,7 @@ public class DiagnosesSmokeTest extends BaseTest {
             rp.clickLeftMenuItem("Clinical Content");
             //  eu.syncWait(2);
             rp.clickByLinkText("Diagnoses");
-            sa.assertEquals(rp.getPageHeading(), "Diagnoses");
+            sa.assertEquals(rp.getPageHeading(), "Diagnoses", "Missing Page Heading Diagnoses");
 
             int beforeFilter = rp.getNumOfGridResults();
             if (!rp.getTextContent(cp.diagnosesTable).contains("search did not match any results")) {

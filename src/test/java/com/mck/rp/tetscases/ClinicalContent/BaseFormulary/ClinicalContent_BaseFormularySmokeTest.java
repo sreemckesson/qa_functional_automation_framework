@@ -274,8 +274,9 @@ public class ClinicalContent_BaseFormularySmokeTest extends BaseTest {
             if (!rp.getTextContent(dp.drugFormularyTable).contains("search did not match any results")) {
                 rp.clickGridFilters("filter-status", "Active");
                 rp.selectListItemByName("Inactive");
+                eu.syncWait(1);
                 AllureReportListener.saveLogs(
-                    "Number of records that match the selected Status filter criteria (Active): " + rp.getNumOfGridResults());
+                    "Number of records that match the selected Status filter criteria (InActive): " + rp.getNumOfGridResults());
                 int afterClassificationFilter = rp.getNumOfGridResults();
                 sa.assertNotEquals(beforeFilter, afterClassificationFilter, "Incorrect status filter count");
             } else {
@@ -341,6 +342,7 @@ public class ClinicalContent_BaseFormularySmokeTest extends BaseTest {
 
                 rp.clickGridFilters("filter-status", "Active");
                 rp.selectListItemByName("Inactive");
+                eu.syncWait(1);
                 if (!rp.getTextContent(dp.nonDrugFormularyTable).contains("search did not match any results")) {
                     AllureReportListener.saveLogs("Number of records that match the selected Status filter criteria: " + rp.getNumOfGridResults());
                     int afterTherapeuticFilter = rp.getNumOfGridResults();
@@ -681,7 +683,9 @@ public class ClinicalContent_BaseFormularySmokeTest extends BaseTest {
                     //edit desc and therapeuticclass
                     rp.sendValue("description", beforeEditDescValInModal + updatedNonDrugDesc);
                     cp.clickFilter("therapeuticClass");
-                    cp.selectFilterItemByName("E & M");
+                    if(!beforeEditNonDrugTableTherapeuticClass.equals("E & M")) {
+                        cp.selectFilterItemByName("E & M");
+                    } else { cp.selectFilterItemByName("Drug Administration");}
                     //  eu.syncWait(1);
                     rp.clickDialogBtn("Save");
                     eu.syncWait(3);
