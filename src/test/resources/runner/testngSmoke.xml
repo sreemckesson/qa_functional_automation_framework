@@ -4,6 +4,7 @@
     <listeners>
         <listener class-name="com.mck.rp.listeners.ExtentReportListener"/>
         <listener class-name="com.mck.rp.listeners.allure.AllureReportListener"/>
+        <!--  <listener class-name="com.mck.rp.listeners.AnnotationTransformer"/>  -->
     </listeners>
 
     <test verbose="2" preserve-order="true" name="Regimen Profiler - Smoke Tests">
@@ -15,6 +16,7 @@
                 </groups>
         -->
         <classes>
+
             <class name="com.mck.rp.tetscases.RegimenAnalysis.PracticeAnalysis.PracticeAnalysisSmokeTest"/>
             <class name="com.mck.rp.tetscases.RegimenAnalysis.PatientAnalysis.PatientAnalysisSmokeTest"/>
             <class name="com.mck.rp.tetscases.DataManagement.BaseFormulary.BaseFormularySmokeTest"/>
@@ -24,6 +26,7 @@
             <class name="com.mck.rp.tetscases.ClinicalContent.BaseFormulary.ClinicalContent_BaseFormularySmokeTest"/>
             <class name="com.mck.rp.tetscases.ClinicalContent.Diagnoses.DiagnosesSmokeTest"/>
             <class name="com.mck.rp.tetscases.OrganizationsPracticeAndUserManagement.Users.UserManagementSmokeTest"></class>
+            <class name="com.mck.rp.tetscases.OrganizationsPracticeAndUserManagement.Organizations.OrganizationManagementSmokeTest"></class>
 
 
         </classes>

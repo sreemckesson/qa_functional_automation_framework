@@ -204,7 +204,7 @@ public class UserManagementSmokeTest extends BaseTest {
             sa.assertEquals(rp.getGridHeading(), "Users", "Grid Header incorrect in users tab.");
 
             int beforeCreatingUserCount = rp.getNumOfGridResults();
-            String newUser = "testautouser" + + rand.nextInt(1000);
+            String newUser = "testautouser" + rand.nextInt(1000);
             String email = newUser + "@" + newUser + ".com";
             AllureReportListener.saveLogs("New " + userType + " user to add: " + newUser + " - Email -" + email);
             eu.doClick(dp.createNew);

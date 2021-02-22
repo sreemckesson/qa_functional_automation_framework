@@ -8,10 +8,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 public class ClinicalContentPage extends BasePage {
 
@@ -48,6 +50,10 @@ public class ClinicalContentPage extends BasePage {
     public By defaultLocationsRadioButton = By.xpath("//li//input[@type='radio']");
     public By userDetails = By.xpath("//h2[contains(text(), 'User Details')]");
     public By permissionsBlock = By.xpath("//p[contains(@class, 'MuiTypography-colorInherit')]");
+    public By orgList = By.xpath("//div[contains(@class,'MuiTreeItem-content')]//div[contains(@class, 'MuiTreeItem-iconContainer')]");
+    public By orgListNames = By.xpath("//div[contains(@class,'MuiTreeItem-content')]//p//strong");
+    public By orgPracListNames = By.xpath("//div[contains(@class,'MuiTreeItem-content')]//p");
+    public By levelInModel = By.xpath("//div[contains(@class, 'MuiGrid-container MuiGrid-item')]//div[@class='MuiGrid-root MuiGrid-item']//p");
 
 
     // constructor of the page class:
@@ -167,6 +173,80 @@ public class ClinicalContentPage extends BasePage {
             e.printStackTrace();
         }
     }
+
+    //org expand/collapse by name
+    @Step("Clicking Org expand collapse icon by name : {0}")
+    public void expandCollapseOrgByName(String name) {
+        try {
+            elementUtil.doClick(By.xpath("//p//strong[contains(text(), '" + name + "')]//preceding::div[1][contains(@class, 'MuiTreeItem-iconContainer')]"));
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Step("Clicking Org by name : {0}")
+    public void clickOrgByName(String name) {
+        try {
+            elementUtil.scrollToView(By.xpath("//p//strong[contains(text(), '" + name + "')]"));
+            elementUtil.doClick(By.xpath("//p//strong[contains(text(), '" + name + "')]"));
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Step("Double Click Org/Practice by name : {0}")
+    public void clickOrgPracticeByName(String name) {
+        try {
+            elementUtil.scrollToView(By.xpath("//p[contains(text(), '" + name + "')]"));
+            //elementUtil.doClick(By.xpath("//p[contains(text(), '" + name + "')]"));
+            Actions a = new Actions(driver);
+            a.doubleClick(elementUtil.getElement(By.xpath("//p[contains(text(), '" + name + "')]"))).build().perform();
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //org create new by name
+    @Step("click create new org button by name : {0}")
+    public void clickCreateNewOrgButtonByName(String name) {
+        try {
+            elementUtil.doClick(By.xpath("//p//strong[contains(text(), '" + name + "')]//following::span[2][contains(text(), 'Create New')]"));
+            TimeUnit.SECONDS.sleep(1);
+        } catch (NoSuchElementException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Step("find org from list of orgs: {1}")
+    public boolean isOrgPresent(By locator, String name) {
+        boolean isOrgPresent = false;
+        List<WebElement> elements = elementUtil.getElements(locator);
+        try {
+            for (WebElement element : elements) {
+                ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+                if (element.getAttribute("textContent").equals(name)) {
+                    isOrgPresent = true;
+                    break;
+                }
+            }
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+        return isOrgPresent;
+
+    }
+
+    @Step("Get org/prac status: {0}")
+    public By getOrgPracStatus(String name) {
+        return By.xpath("//p[contains(text(), '" + name +"')]//following::span[1]");
+    }
+
 
     //move this method to RegimenPage
     @Step("Click list value from dropdown field by Name: {0}")
