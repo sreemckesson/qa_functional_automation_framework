@@ -189,7 +189,7 @@ public class UsersSmokeTest extends BaseTest {
             String lastName = "User" + new Random().nextInt(1000);
             String email = lastName + "@" + lastName + ".com";
             AllureReportListener.saveLogs("New user to add: " + lastName + " - Email -" + email);
-            rp.sendKeysByAction("firstName", "Automation");
+            rp.sendKeysByAction("firstName", "Auto");
             rp.sendKeysByAction("lastName", lastName);
             rp.sendKeysByAction("email", email);
             sa.assertEquals(eu.getTextcontent(cp.getDropdownSelectedValue("default-location")),
@@ -215,7 +215,7 @@ public class UsersSmokeTest extends BaseTest {
             //valiate for created user name, eamil, type, status etc.
             if (eu.getGridRowCount(dp.userTable) > 0) {
                 System.out.println(email);
-                sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[0], lastName+", Automation", "Incorrect username in table");
+                sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[0], lastName+", Auto", "Incorrect username in table");
                 sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[1], email, "Incorrect user email in table");
                 sa.assertTrue(rp.getRowCellData(dp.userTable, 0)[4].contains("Not Invited"), "Incorrect user status in table" );
                 sa.assertEquals(eu.getTextcontent(cp.getLinkInTable(0, 5)), "Send Invitation", "Incorrect invitation status");

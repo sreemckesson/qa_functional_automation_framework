@@ -51,6 +51,9 @@ public class UserManagementSmokeTest extends BaseTest {
                 selectedLocation = eu.getElement(cp.selectedLocation).getText();
                 System.out.println("selectedLocation: " + selectedLocation);
             }
+            rp.clickLeftMenuItem("Practice & User Management");
+            rp.clickByLinkText("Organizations, Practices, & Users");
+            rp.clickTabs("Users");
         } catch (NoSuchElementException | InterruptedException e) {
             AllureReportListener.saveLogs("Test Method Failed!!");
         }
@@ -67,9 +70,9 @@ public class UserManagementSmokeTest extends BaseTest {
     public void userSearchSortAndFilter() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
-            rp.clickLeftMenuItem("Practice & User Management");
-            rp.clickByLinkText("Organizations, Practices, & Users");
-            rp.clickTabs("Users");
+//            rp.clickLeftMenuItem("Practice & User Management");
+//            rp.clickByLinkText("Organizations, Practices, & Users");
+//            rp.clickTabs("Users");
             sa.assertEquals(rp.getPageHeading(), "Organizations, Practices, & Users", "Page Header incorrect in users tab.");
             sa.assertEquals(rp.getGridHeading(), "Users", "Grid Header incorrect in users tab.");
 
@@ -138,6 +141,7 @@ public class UserManagementSmokeTest extends BaseTest {
 
                     //sort by name
                     rp.srhRegDrugDiagAndEnter("rp");
+                    eu.syncWait(1);
                     List<String> beforeSortList = rp.tableColumnList(dp.userTable, 0);
                     List<String> sortList = cp.sortItemsListIgnoreCase(beforeSortList, "desc");
                     rp.clickTableHeaderForSort("Last, First");
@@ -149,6 +153,7 @@ public class UserManagementSmokeTest extends BaseTest {
 
                     //sort by email
                     rp.srhRegDrugDiagAndEnter("");
+                    eu.syncWait(1);
                     rp.srhRegDrugDiagAndEnter("automation");
                     eu.syncWait(2);
                     beforeSortList = rp.tableColumnList(dp.userTable, 1);
@@ -161,11 +166,13 @@ public class UserManagementSmokeTest extends BaseTest {
                     rp.clickTableHeaderForSort("Email");
 
                     //View user
+                    eu.syncWait(1);
                     rp.srhRegDrugDiagAndEnter(srhUser);
+                    eu.syncWait(1);
                     String nameFromTable = rp.getRowCellData(dp.userTable, 0)[0];
                     eu.syncWait(1);
                     rp.clickGridCell("table", 1, 1);
-                    eu.syncWait(1);
+                    eu.syncWait(2);
                     sa.assertEquals(rp.getPageHeading(), "User Account", "Incorrect page heading");
                     sa.assertEquals(rp.getGridHeading(), "User Details", "Incorrect grid heading");
                     String firstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
@@ -175,7 +182,7 @@ public class UserManagementSmokeTest extends BaseTest {
                     eu.scrollToBottom();
                     rp.clickButton("Cancel");
                     eu.syncWait(1);
-                    rp.clickLeftMenuItem("Practice & User Management");
+                    //rp.clickLeftMenuItem("Practice & User Management");
                 }
             } else {
                 sa.fail();
@@ -197,9 +204,9 @@ public class UserManagementSmokeTest extends BaseTest {
         SoftAssert sa = new SoftAssert();
         Random rand = new Random();
         try {
-            rp.clickLeftMenuItem("Practice & User Management");
-            rp.clickByLinkText("Organizations, Practices, & Users");
-            rp.clickTabs("Users");
+//            rp.clickLeftMenuItem("Practice & User Management");
+//            rp.clickByLinkText("Organizations, Practices, & Users");
+//            rp.clickTabs("Users");
             sa.assertEquals(rp.getPageHeading(), "Organizations, Practices, & Users", "Page Header incorrect in users tab.");
             sa.assertEquals(rp.getGridHeading(), "Users", "Grid Header incorrect in users tab.");
 
@@ -258,15 +265,14 @@ public class UserManagementSmokeTest extends BaseTest {
             eu.doClick(cp.getSpanTextElement("Patient Analysis"));
             eu.scrollToBottom();
             rp.clickSubmit("Save");
-            eu.syncWait(5);
+            eu.syncWait(8);
             eu.doClick(cp.getConfirmDialogBtn("Close"));
            // eu.doClick(cp.getConfirmDialogBtn("Yes"));
            // eu.doClick(cp.getConfirmDialogBtn("Yes"));
-            eu.syncWait(1);
+            eu.syncWait(2);
 
             //valiate for created user name, eamil, type, status etc.
             if (eu.getGridRowCount(dp.userTable) > 0) {
-                System.out.println(email);
                 sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[0], newUser+", "+newUser, "Incorrect username in table");
                 sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[1], email, "Incorrect user email in table");
                 sa.assertEquals(rp.getRowCellData(dp.userTable, 0)[2], userType, "Incorrect user type in table");
@@ -276,10 +282,11 @@ public class UserManagementSmokeTest extends BaseTest {
 
             //validate total user count is updated
             rp.srhRegDrugDiagAndEnter("");
+            eu.syncWait(1);
             int afterCreatingUserCount = rp.getNumOfGridResults();
             AllureReportListener.saveLogs("Before user count " + beforeCreatingUserCount + " After user count: " + afterCreatingUserCount);
             sa.assertTrue(afterCreatingUserCount>beforeCreatingUserCount, "User count incorrect after adding user.");
-            rp.clickLeftMenuItem("Practice & User Management");
+           // rp.clickLeftMenuItem("Practice & User Management");
 
         } catch (NoSuchElementException | InterruptedException | StaleElementReferenceException e) {
             sa.fail();
@@ -296,21 +303,22 @@ public class UserManagementSmokeTest extends BaseTest {
     public void userEdit() throws NoSuchElementException {
         SoftAssert sa = new SoftAssert();
         try {
-            rp.clickLeftMenuItem("Practice & User Management");
-            rp.clickByLinkText("Organizations, Practices, & Users");
-            rp.clickTabs("Users");
+//            rp.clickLeftMenuItem("Practice & User Management");
+//            rp.clickByLinkText("Organizations, Practices, & Users");
+//            rp.clickTabs("Users");
             sa.assertEquals(rp.getPageHeading(), "Organizations, Practices, & Users", "Page Header incorrect in users tab.");
             sa.assertEquals(rp.getGridHeading(), "Users", "Grid Header incorrect in users tab.");
             eu.syncWait(1);
             rp.clickGridFilters("user-type-select", "Type");
             rp.selectFilterItemByIndex(0);
             rp.srhRegDrugDiagAndEnter("testautouser");
+            eu.syncWait(1);
 
             if(eu.getGridRowCount(dp.userTable) > 0) {
                 String nameInUserList = rp.getRowCellData(dp.userTable, 0)[0];
                 AllureReportListener.saveLogs("User to edit " + nameInUserList);
                 rp.clickGridCell("table", 1, 1);
-                eu.syncWait(1);
+                eu.syncWait(2);
                 String firstName = eu.getAttribute(rp.getInputField("firstName"), "defaultValue");
                 String lastName = eu.getAttribute(rp.getInputField("lastName"), "defaultValue");
                 String nameFromDetails = lastName + ", " + firstName;
@@ -321,13 +329,13 @@ public class UserManagementSmokeTest extends BaseTest {
                 eu.scrollToBottom();
                 eu.syncWait(1);
                 rp.clickSubmit("Save");
-                eu.syncWait(3);
+                eu.syncWait(4);
                 eu.doClick(cp.getConfirmDialogBtn("Close"));
                 eu.syncWait(1);
 
                 rp.srhRegDrugDiagAndEnter(afterUpdatefirstName);
+                eu.syncWait(2);
                 sa.assertEquals(eu.getGridRowCount(dp.userTable), 1, "User record was not updated.");
-                eu.syncWait(1);
 
                 //revert changes
                 rp.clickGridCell("table", 1, 1);
