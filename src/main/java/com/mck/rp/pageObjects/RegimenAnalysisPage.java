@@ -759,6 +759,16 @@ public class RegimenAnalysisPage extends BasePage {
     }
 
     /**
+     * @param  locator
+     * @param attributeName
+     * @return elements attributeValue
+     */
+    public String getAttributeValue(By locator, String attributeName) {
+        WebElement element = driver.findElement(locator);
+        return element.getAttribute(attributeName);
+    }
+
+    /**
      * @param locator
      * @param i
      * @return
