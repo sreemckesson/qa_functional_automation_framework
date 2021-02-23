@@ -242,6 +242,7 @@ public class PracticeAnalysisSmokeTest extends BaseTest {
 
                 rp.clickGridFilters("diagnosis-select", "Diagnosis");
                 rp.selectFilterItemByName("Amyloidosis");
+                eu.syncWait(2);
                 if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
                     AllureReportListener.saveLogs("Number of records that match the selected Diagnosis filter criteria: " + rp.getNumOfGridResults());
                     int afterDiagFilter = rp.getNumOfGridResults();
@@ -254,6 +255,7 @@ public class PracticeAnalysisSmokeTest extends BaseTest {
 
                 rp.clickGridFilters("drugs-select", "Drug");
                 rp.selectFilterItemByIndex(2);
+                eu.syncWait(2);
                 if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
                     //ExtentReportListener.test.get().log(Status.INFO, "Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
                     AllureReportListener.saveLogs("Number of records that match the selected Drug filter criteria: " + rp.getNumOfGridResults());
