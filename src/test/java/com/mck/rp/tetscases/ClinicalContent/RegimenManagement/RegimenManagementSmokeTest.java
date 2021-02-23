@@ -189,6 +189,7 @@ public class RegimenManagementSmokeTest extends BaseTest {
                 eu.syncWait(3);
 
                 //Sort by Date Last Updated - Need to check
+                rp.clickTableHeaderForSort("Date Last Updated");
                 List<String> beforeSortListDate = rp.tableColumnList(cp.regimenTable, 3);
                 List<String> sortListDate = eu.sortItemsList(beforeSortListDate, "desc");
                 rp.clickTableHeaderForSort("Date Last Updated");

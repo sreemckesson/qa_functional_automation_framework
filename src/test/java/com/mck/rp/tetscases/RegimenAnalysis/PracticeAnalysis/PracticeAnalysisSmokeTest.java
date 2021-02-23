@@ -230,6 +230,7 @@ public class PracticeAnalysisSmokeTest extends BaseTest {
                 int beforeFilter = rp.getNumOfGridResults();
                 rp.clickGridFilters("break-even-select", "Break Even");
                 rp.selectFilterItemByIndex(1);
+                eu.syncWait(1);
                 if (!rp.getTextContent(rp.pracTable).contains("search did not match any results")) {
                     int afterBreakEvenFilter = rp.getNumOfGridResults();
                     sa.assertNotEquals(beforeFilter, afterBreakEvenFilter, "Break Even Filter - Not working as expected");

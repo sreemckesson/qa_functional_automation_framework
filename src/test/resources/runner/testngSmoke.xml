@@ -27,6 +27,7 @@
             <class name="com.mck.rp.tetscases.ClinicalContent.Diagnoses.DiagnosesSmokeTest"/>
             <class name="com.mck.rp.tetscases.OrganizationsPracticeAndUserManagement.Users.UserManagementSmokeTest"></class>
             <class name="com.mck.rp.tetscases.OrganizationsPracticeAndUserManagement.Organizations.OrganizationManagementSmokeTest"></class>
+            <class name="com.mck.rp.tetscases.ClinicalContent.RegimenManagement.RegimenManagementSmokeTest"></class>
 
 
         </classes>
